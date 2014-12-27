@@ -1,6 +1,7 @@
 
 static BOOL enabled;
 static NSInteger *resetDate;
+static NSTimer *resetTimer;
 
 static void loadPreferences() {
   CFPreferencesAppSynchronize(CFSTR("com.greeny.autostatisticsreset"));
@@ -27,6 +28,23 @@ static void resetData() { //call your method to reset data (there should be an i
 
 //method should reset data usage
 %hook SettingsNetworkController 
+-(void)loadView {
+   if (resetTimer) {
+    [resetTimer invalidate];
+    resetTimer = nil;
+  }
+
+  resetTimer = [NSTimer scheduledTimerWithTimeInterval:24.0 * 60.0 * 60.0 target:self selector:@selector(checkDates:) userInfo:nil repeats:YES];
+  %orig;
+}
+
+%new 
+- (void)checkDates:(id)sender {
+  if (shouldResetData()) { 
+    resetData();
+  }
+}
+
 -(void)clearStats:(id)totalDataUsageForSpecifier {
   %orig;
 }
