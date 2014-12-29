@@ -2,7 +2,7 @@
 static BOOL enabled;
 static NSInteger resetDate;
 
-@interface SettingsNetworkController
+@interface SettingsNetworkController : UIViewController
 -(void)clearStats:(id)arg1;
 +(id)sharedInstance;
 -(id)init;
@@ -14,7 +14,7 @@ static void loadPreferences() {
       //you could do the same thing for any other value, just cast it to id and use the conversion methods
       //if the value doesn't exist (i.e. the user hasn't changed their preferences), it is set to the value after the "?:" (in this case, YES and @"default", respectively
   enabled = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.autostatisticsreset")) boolValue];
-  resetDate = [[NSNumber numberWithString:(NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
+  resetDate = [[NSNumber numberFromString:(NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
 }
 
 static BOOL shouldResetData() {
@@ -94,7 +94,7 @@ static void resetData() { //call your method to reset data (there should be an i
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), CFNotificationSuspensionBehaviorDeliverImmediately);
   loadPreferences();
 
-  BOOL invalidForStart = (!resetDate || resetDate == nil || resetDate == 0);
+  BOOL invalidForStart = (!resetDate || resetDate == 0);
   if (!invalidForStart) {
     [[RCSTimer sharedInstance] startTimer];
   }
