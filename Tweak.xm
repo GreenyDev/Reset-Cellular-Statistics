@@ -1,3 +1,4 @@
+#import <UIKit/UIKit.h>
 
 static BOOL enabled;
 static NSInteger resetDate;
