@@ -10,6 +10,21 @@ static NSInteger resetDate;
 -(id)init;
 @end
 
+//method should reset data usage
+%hook SettingsNetworkController 
+
+%new
++(id)sharedInstance {
+  static dispatch_once_t pred;
+  static SettingsNetworkController *shared = nil;
+   
+  dispatch_once(&pred, ^{
+    shared = [[SettingsNetworkController alloc] init];
+  });
+  return shared;
+}
+%end
+
 static void loadPreferences() {
   CFPreferencesAppSynchronize(CFSTR("com.greeny.autostatisticsreset"));
       //In this case, you get the value for the key "enabled"
@@ -78,21 +93,6 @@ static void resetData() { //call your method to reset data (there should be an i
 }
 
 @end
-
-//method should reset data usage
-%hook SettingsNetworkController 
-
-%new
-+(id)sharedInstance {
-  static dispatch_once_t pred;
-  static SettingsNetworkController *shared = nil;
-   
-  dispatch_once(&pred, ^{
-    shared = [[SettingsNetworkController alloc] init];
-  });
-  return shared;
-}
-%end
 
 %ctor {
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), CFNotificationSuspensionBehaviorDeliverImmediately);
