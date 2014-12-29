@@ -2,6 +2,7 @@ ARCHS = armv7 arm64
 TARGET = iphone:clang:latest:latest
 THEOS_BUILD_DIR = Packages
 GO_EASY_ON_ME = 1
+ADDITIONAL_OBJCFLAGS = -fobjc-arc
 
 include theos/makefiles/common.mk
 

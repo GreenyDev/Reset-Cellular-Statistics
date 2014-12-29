@@ -15,7 +15,9 @@ static void loadPreferences() {
       //you could do the same thing for any other value, just cast it to id and use the conversion methods
       //if the value doesn't exist (i.e. the user hasn't changed their preferences), it is set to the value after the "?:" (in this case, YES and @"default", respectively
   enabled = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.autostatisticsreset")) boolValue];
-  resetDate = [[NSNumber numberFromString:(NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
+  NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+  [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
+  resetDate = [[formatter numberFromString:(NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
 }
 
 static BOOL shouldResetData() {
