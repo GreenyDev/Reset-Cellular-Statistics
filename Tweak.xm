@@ -1,7 +1,12 @@
 
 static BOOL enabled;
-static NSInteger *resetDate;
-static NSTimer *resetTimer;
+static NSInteger resetDate;
+
+@interface SettingsNetworkController
+-(void)clearStats:(id)arg1;
++(id)sharedInstance;
+-(id)init;
+@end
 
 static void loadPreferences() {
   CFPreferencesAppSynchronize(CFSTR("com.greeny.autostatisticsreset"));
@@ -24,43 +29,74 @@ static BOOL shouldResetData() {
 
 static void resetData() { //call your method to reset data (there should be an instance of SettingsNetworkController that you can hook into here)
   //logic to reset data
+  [[%c(SettingsNetworkController) sharedInstance] clearStats:nil];
 }
 
-//method should reset data usage
-%hook SettingsNetworkController 
--(void)loadView {
-   if (resetTimer) {
+@interface RCSTimer : NSObject
+{
+  NSTimer *resetTimer;
+}
+
++ (instancetype)sharedInstance;
+- (void)startTimer;
+- (void)resetTimer;
+- (void)checkDates:(id)sender;
+@end
+
+@implementation RCSTimer 
+
++ (instancetype)sharedInstance {
+  static dispatch_once_t pred;
+  static RCSTimer *shared = nil;
+   
+  dispatch_once(&pred, ^{
+    shared = [[RCSTimer alloc] init];
+  });
+  return shared;
+}
+
+- (void)startTimer {
+  [self resetTimer];
+  resetTimer = [NSTimer scheduledTimerWithTimeInterval:24.0 * 60.0 * 60.0 target:self selector:@selector(checkDates:) userInfo:nil repeats:YES];
+}
+
+- (void)resetTimer {
+  if (resetTimer) {
     [resetTimer invalidate];
     resetTimer = nil;
   }
-
-  resetTimer = [NSTimer scheduledTimerWithTimeInterval:24.0 * 60.0 * 60.0 target:self selector:@selector(checkDates:) userInfo:nil repeats:YES];
-  %orig;
 }
 
-%new 
 - (void)checkDates:(id)sender {
   if (shouldResetData()) { 
     resetData();
   }
 }
 
--(void)clearStats:(id)totalDataUsageForSpecifier {
-  %orig;
+@end
+
+//method should reset data usage
+%hook SettingsNetworkController 
+
+%new
++(id)sharedInstance {
+  static dispatch_once_t pred;
+  static SettingsNetworkController *shared = nil;
+   
+  dispatch_once(&pred, ^{
+    shared = [[SettingsNetworkController alloc] init];
+  });
+  return shared;
 }
 %end
 
 %ctor {
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), CFNotificationSuspensionBehaviorDeliverImmediately);
   loadPreferences();
+
+  BOOL invalidForStart = (!resetDate || resetDate == nil || resetDate == 0);
+  if (!invalidForStart) {
+    [[RCSTimer sharedInstance] startTimer];
+  }
 }
-
-/*
-You need to put this somewhere where it runs every day. This will check if the current date is the reset date and then run your reset logic if it is.
-
-if (shouldResetData()) { 
-  resetData();
-}
-
-*/
 
