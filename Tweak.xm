@@ -1,9 +1,10 @@
 #import <UIKit/UIKit.h>
+#import <Preferences/PSListController.h>
 
 static BOOL enabled;
 static NSInteger resetDate;
 
-@interface SettingsNetworkController : UIViewController
+@interface SettingsNetworkController : PSListController
 -(void)clearStats:(id)arg1;
 +(id)sharedInstance;
 -(id)init;
