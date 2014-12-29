@@ -1,4 +1,4 @@
-#import <UIKit/UIKit.h>
+#import <CoreTelephony/CTRegistration.h>
 
 static BOOL enabled;
 static NSInteger resetDate;
@@ -76,7 +76,7 @@ static void resetData() { //call your method to reset data (there should be an i
   CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
                                 NULL,
                                 (CFNotificationCallback)loadPreferences,
-                                CFSTR("com.greeny.autostatisticsreset/prefsChanged"),
+                                CFSTR("com.greeny.autostatisticsreset/loadPreferences"),
                                 NULL,
                                 CFNotificationSuspensionBehaviorDeliverImmediately);
   loadPreferences();

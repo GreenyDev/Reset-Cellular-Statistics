@@ -8,7 +8,7 @@ include theos/makefiles/common.mk
 
 TWEAK_NAME = AutoStatisticsReset
 AutoStatisticsReset_FILES = Tweak.xm
-AutoStatisticsReset_FRAMEWORKS = Foundation UIKit
+AutoStatisticsReset_FRAMEWORKS = Foundation CoreTelephony
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 

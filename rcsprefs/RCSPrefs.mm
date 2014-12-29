@@ -1,4 +1,4 @@
-#import <Preferences/Preferences.h>
+#import <Preferences/PSListController.h>
 
 @interface RCSPrefsListController: PSListController {
 }
@@ -7,7 +7,7 @@
 @implementation RCSPrefsListController
 - (id)specifiers {
 	if(_specifiers == nil) {
-		_specifiers = [[self loadSpecifiersFromPlistName:@"RCSPrefs" target:self] retain];
+		_specifiers = [self loadSpecifiersFromPlistName:@"RCSPrefs" target:self];
 	}
 	return _specifiers;
 }
