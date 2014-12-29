@@ -1,39 +1,17 @@
 #import <UIKit/UIKit.h>
-#import <Preferences/PSListController.h>
 
 static BOOL enabled;
 static NSInteger resetDate;
-
-@interface SettingsNetworkController : PSListController
--(void)clearStats:(id)arg1;
-+(id)sharedInstance;
--(id)init;
-@end
-
-//method should reset data usage
-%hook SettingsNetworkController 
-
-%new
-+(id)sharedInstance {
-  static dispatch_once_t pred;
-  static SettingsNetworkController *shared = nil;
-   
-  dispatch_once(&pred, ^{
-    shared = [[SettingsNetworkController alloc] init];
-  });
-  return shared;
-}
-%end
 
 static void loadPreferences() {
   CFPreferencesAppSynchronize(CFSTR("com.greeny.autostatisticsreset"));
       //In this case, you get the value for the key "enabled"
       //you could do the same thing for any other value, just cast it to id and use the conversion methods
       //if the value doesn't exist (i.e. the user hasn't changed their preferences), it is set to the value after the "?:" (in this case, YES and @"default", respectively
-  enabled = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.autostatisticsreset")) boolValue];
+  enabled = [(__bridge NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.autostatisticsreset")) boolValue];
   NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
   [formatter setNumberStyle:NSNumberFormatterDecimalStyle];
-  resetDate = [[formatter numberFromString:(NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
+  resetDate = [[formatter numberFromString:(__bridge NSString*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"))] integerValue];
 }
 
 static BOOL shouldResetData() {
@@ -48,7 +26,7 @@ static BOOL shouldResetData() {
 
 static void resetData() { //call your method to reset data (there should be an instance of SettingsNetworkController that you can hook into here)
   //logic to reset data
-  [[%c(SettingsNetworkController) sharedInstance] clearStats:nil];
+  CTRegistrationDataCounterReset();
 }
 
 @interface RCSTimer : NSObject
@@ -95,7 +73,12 @@ static void resetData() { //call your method to reset data (there should be an i
 @end
 
 %ctor {
-  CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), CFNotificationSuspensionBehaviorDeliverImmediately);
+  CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(),
+                                NULL,
+                                (CFNotificationCallback)loadPreferences,
+                                CFSTR("com.greeny.autostatisticsreset/prefsChanged"),
+                                NULL,
+                                CFNotificationSuspensionBehaviorDeliverImmediately);
   loadPreferences();
 
   BOOL invalidForStart = (!resetDate || resetDate == 0);
