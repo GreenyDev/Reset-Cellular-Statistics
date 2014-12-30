@@ -5,16 +5,24 @@
 #import <UIKit/UIKit.h>
 #import <Twitter/TWTweetComposeViewController.h>
 #import <Flipswitch/Flipswitch.h>
+#import <CoreFoundation/CoreFoundation.h>
+#define DEBUG
+#define DEBUG_PREFIX @"[RCS]"
+#import "../DebugLog.h"
 
 #define kTintColor [UIColor colorWithRed:86.0/256.0 green:86.0/256.0 blue:92.0/256.0 alpha:1.0]
 
-int width = [[UIScreen mainScreen] bounds].size.width;
+static int width = [[UIScreen mainScreen] bounds].size.width;
 
 @protocol PreferencesTableCustomView
 - (id)initWithSpecifier:(id)arg1;
 @end
 
 @interface RCSPrefsListController: PSListController {
+}
+@end
+@interface RCSDatePickerCell : PSEditableTableCell {
+    NSDateFormatter *formatter;
 }
 @end
 
@@ -25,11 +33,25 @@ int width = [[UIScreen mainScreen] bounds].size.width;
 	}
 	return _specifiers;
 }
--(void)respring{
-	[[FSSwitchPanel sharedPanel] applyActionForSwitchIdentifier:@"com.a3tweaks.switch.respring"];
+-(void)stopEditing
+{
+    [self.view endEditing:YES];
 }
 - (void)donate{
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=9ZXVHGA5AW5CG&lc=AU&item_name=GreenyDev&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"]];
+}
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    [super touchesBegan:touches withEvent:event];
+    [self.view endEditing:YES];
+}
+-(id)datePickerStringValue:(id)specifier {
+    NSDate *date = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"));
+    //formatter for the user to see the calendar setting
+    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    return [formatter stringFromDate:date];
 }
 @end
 
@@ -237,6 +259,42 @@ int width = [[UIScreen mainScreen] bounds].size.width;
 - (void)SHIVADOCReddit{
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.reddit.com/user/shivadoc"]];
 }
+@end
+
+@implementation RCSDatePickerCell
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    ///date picker like the keyboard
+    UIDatePicker *datePicker = [[UIDatePicker alloc] init];
+    datePicker.minimumDate = [NSDate date];
+    [datePicker addTarget:self action:@selector(updateTextField:)
+         forControlEvents:UIControlEventValueChanged];
+    //formatter for the user to see the calendar setting
+    formatter = [[NSDateFormatter alloc] init];
+    [formatter setDateStyle:NSDateFormatterMediumStyle];
+    [formatter setTimeStyle:NSDateFormatterShortStyle];
+    
+    [[self textField] setInputView:datePicker]; //change from keyboard to date picker
+    [[self textField] setTintColor:[UIColor clearColor]]; //makes the cursor invisible, looks cleaner
+}
+
+-(void)updateTextField:(UIDatePicker *)sender
+{
+    NSString *newVal = [formatter stringFromDate:sender.date];
+    [self setValue:newVal];
+}
+
+-(void)endEditingAndSave {
+    [super endEditingAndSave];
+    NSDate *date = [formatter dateFromString:[self value]];
+    if ([date timeIntervalSinceDate:[NSDate date]]>0) {
+        //manually set the value and post the notification because the other way wasn't working
+        CFPreferencesSetAppValue ( CFSTR("resetDate"), date, CFSTR("com.greeny.autostatisticsreset") );
+        CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.autostatisticsreset/prefsChanged"), NULL, NULL, YES );
+    }
+}
+
 @end
 
 
