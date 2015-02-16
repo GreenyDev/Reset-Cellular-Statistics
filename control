@@ -1,6 +1,6 @@
 Package: com.greeny.restats
 Name: ReStats
-Depends: mobilesubstrate, com.a3tweaks.flipswitch, ws.hbang.common
+Depends: mobilesubstrate, com.a3tweaks.flipswitch
 Conflicts: com.greeny.autostatisticsreset
 Version: 0.0.1
 Architecture: iphoneos-arm
