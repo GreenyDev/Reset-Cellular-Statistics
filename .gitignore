@@ -12,4 +12,4 @@ obj
 centerstage.sublime-project
 centerstage.sublime-workspace
 Packages/
-.sh
+*.sh
