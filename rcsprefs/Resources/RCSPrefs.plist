@@ -10,11 +10,11 @@
 		</dict>
 		<dict>
 			<key>PostNotification</key>
-			<string>com.greeny.autostatisticsreset/prefsChanged</string>
+			<string>com.greeny.ReStats/prefsChanged</string>
 			<key>label</key>
 			<string>Cycle...</string>
 			<key>defaults</key>
-			<string>com.greeny.autostatisticsreset</string>
+			<string>com.greeny.ReStats</string>
 			<key>default</key>
 			<string>0</string>
 			<key>key</key>
@@ -49,7 +49,7 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<key>label</key>
 			<string>Data Reset Date</string>
 			<key>defaults</key>
-			<string>com.greeny.autostatisticsreset</string>
+			<string>com.greeny.ReStats</string>
 			<key>get</key>
 			<string>datePickerStringValue:</string>
 			<key>set</key>
@@ -93,6 +93,6 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 		</dict>
 	</array>
 	<key>title</key>
-	<string>AutoStatisticsReset</string>
+	<string>ReStats</string>
 </dict>
 </plist>

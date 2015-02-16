@@ -8,7 +8,7 @@ RCSPrefs_FILES = RCSPrefs.mm
 RCSPrefs_INSTALL_PATH = /Library/PreferenceBundles
 RCSPrefs_FRAMEWORKS = UIKit
 RCSPrefs_PRIVATE_FRAMEWORKS = Preferences
-RCSPrefs_LIBRARIES = flipswitch
+RCSPrefs_LIBRARIES = flipswitch cephei
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 

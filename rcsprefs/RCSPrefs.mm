@@ -9,6 +9,7 @@
 #define DEBUG
 #define DEBUG_PREFIX @"[RCS]"
 #import "../DebugLog.h"
+#import <Cephei/HBSpinnerTableCell.h>
 
 #define kTintColor [UIColor colorWithRed:86.0/256.0 green:86.0/256.0 blue:92.0/256.0 alpha:1.0]
 
@@ -46,7 +47,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     [self.view endEditing:YES];
 }
 -(id)datePickerStringValue:(id)specifier {
-    NSDate *date = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"));
+    NSDate *date = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.ReStats"));
     //formatter for the user to see the calendar setting
     NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
     [formatter setDateStyle:NSDateFormatterMediumStyle];
@@ -121,7 +122,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 
 - (CGFloat)preferredHeightForWidth:(CGFloat)arg1
 {
-    return 80.f;
+    return 70.f;
 }
 
 
@@ -247,17 +248,199 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 - (CGFloat)preferredHeightForWidth:(CGFloat)arg1
 {
-    return 20.f;
+    return 1.5f;
 }
 
+@end
+
+@interface BrandonMartin : PSTableCell {
+    UIImageView *_background;
+    UILabel *devName;
+    UILabel *devRealName;
+    UILabel *jobSubtitle;
+}
+@end
+
+@implementation BrandonMartin
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])){
+        UIImage *bkIm = [[UIImage alloc] initWithContentsOfFile:@"/Library/PreferenceBundles/RCSPrefs.bundle/BrandonMartinTwitter.png"];
+        _background = [[UIImageView alloc] initWithImage:bkIm];
+        _background.frame = CGRectMake(10, 15, 70, 70);
+                    _background.layer.cornerRadius = _background.frame.size.height / 2;
+            _background.layer.masksToBounds = YES;
+            _background.layer.borderWidth = 0;
+        [self addSubview:_background];
+        
+        CGRect frame = [self frame];
+        
+        devName = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 10, frame.size.width, frame.size.height)];
+        [devName setText:@"Brandon Martin"];
+        [devName setBackgroundColor:[UIColor clearColor]];
+        [devName setTextColor:kTintColor];
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+            [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:30]];
+        else
+            [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:23]];
+        
+        [self addSubview:devName];
+        
+        devRealName = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 30, frame.size.width, frame.size.height)];
+        [devRealName setText:@"@BrandonMStudios on Twitter"];
+        [devRealName setTextColor:kTintColor];
+        [devRealName setBackgroundColor:[UIColor clearColor]];
+        [devRealName setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+        
+        [self addSubview:devRealName];
+
+        jobSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 50, frame.size.width, frame.size.height)];
+        [jobSubtitle setText:@"Icon Designer"];
+        [jobSubtitle setTextColor:kTintColor];
+        [jobSubtitle setBackgroundColor:[UIColor clearColor]];
+        [jobSubtitle setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+        
+        [self addSubview:jobSubtitle];
+    }
+    return self;
+}
+
+- (CGFloat)preferredHeightForWidth:(CGFloat)arg1
+{
+    return 80.f;
+}
+
+
+@end
+
+@interface BrandonMartinTwitter : PSListController { }
+@end
+
+@implementation BrandonMartinTwitter
+- (id)specifiers {
+    NSString *user = @"BrandonMStudios";
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name=" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name=" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitter://user?screen_name=" stringByAppendingString:user]]];
+    
+    else
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/" stringByAppendingString:user]]];
+    return 0;
+}
+
+- (void)viewDidAppear:(BOOL)arg1 {
+    UINavigationController *navController = self.navigationController;
+    [navController popViewControllerAnimated:YES];
+}
 @end
 
 @interface SHIVADOCReddit : PSListController { }
 @end
 
 @implementation SHIVADOCReddit
-- (void)SHIVADOCReddit{
+- (id)specifiers {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.reddit.com/user/shivadoc"]];
+    return 0;
+}
+
+- (void)viewDidAppear:(BOOL)arg1 {
+    UINavigationController *navController = self.navigationController;
+    [navController popViewControllerAnimated:YES];
+}
+@end
+
+@interface MD : PSTableCell {
+    UIImageView *_background;
+    UILabel *devName;
+    UILabel *devRealName;
+    UILabel *jobSubtitle;
+}
+@end
+
+@implementation MD
+- (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier {
+    if((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])){
+        UIImage *bkIm = [[UIImage alloc] initWithContentsOfFile:@"/Library/PreferenceBundles/RCSPrefs.bundle/MD.png"];
+        _background = [[UIImageView alloc] initWithImage:bkIm];
+        _background.frame = CGRectMake(10, 15, 70, 70);
+                    _background.layer.cornerRadius = _background.frame.size.height / 2;
+            _background.layer.masksToBounds = YES;
+            _background.layer.borderWidth = 0;
+        [self addSubview:_background];
+        
+        CGRect frame = [self frame];
+        
+        devName = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 10, frame.size.width, frame.size.height)];
+        [devName setText:@"Milo Darling"];
+        [devName setBackgroundColor:[UIColor clearColor]];
+        [devName setTextColor:kTintColor];
+        if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+            [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:30]];
+        else
+            [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:23]];
+        
+        [self addSubview:devName];
+        
+        devRealName = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 30, frame.size.width, frame.size.height)];
+        [devRealName setText:@"@JamesIscNeutron on Twitter"];
+        [devRealName setTextColor:kTintColor];
+        [devRealName setBackgroundColor:[UIColor clearColor]];
+        [devRealName setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+        
+        [self addSubview:devRealName];
+
+        jobSubtitle = [[UILabel alloc] initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 50, frame.size.width, frame.size.height)];
+        [jobSubtitle setText:@"Assisted with Development"];
+        [jobSubtitle setTextColor:kTintColor];
+        [jobSubtitle setBackgroundColor:[UIColor clearColor]];
+        [jobSubtitle setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+        
+        [self addSubview:jobSubtitle];
+    }
+    return self;
+}
+
+- (CGFloat)preferredHeightForWidth:(CGFloat)arg1
+{
+    return 80.f;
+}
+
+
+@end
+
+@interface MDTwitter : PSListController { }
+@end
+
+@implementation MDTwitter
+- (id)specifiers {
+    NSString *user = @"JamesIscNeutron";
+    if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name=" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"tweetings:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name=" stringByAppendingString:user]]];
+    
+    else if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter:"]])
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"twitter://user?screen_name=" stringByAppendingString:user]]];
+    
+    else
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/" stringByAppendingString:user]]];
+    return 0;
+}
+
+- (void)viewDidAppear:(BOOL)arg1 {
+    UINavigationController *navController = self.navigationController;
+    [navController popViewControllerAnimated:YES];
 }
 @end
 
@@ -290,8 +473,8 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     NSDate *date = [formatter dateFromString:[self value]];
     if ([date timeIntervalSinceDate:[NSDate date]]>0) {
         //manually set the value and post the notification because the other way wasn't working
-        CFPreferencesSetAppValue ( CFSTR("resetDate"), date, CFSTR("com.greeny.autostatisticsreset") );
-        CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.autostatisticsreset/prefsChanged"), NULL, NULL, YES );
+        CFPreferencesSetAppValue ( CFSTR("resetDate"), date, CFSTR("com.greeny.ReStats") );
+        CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.ReStats/prefsChanged"), NULL, NULL, YES );
     }
 }
 

@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <SpringBoard/SBApplication.h>
-#import "CoreTelephony/CoreTelephony.h"
+//#import <CoreTelephony/CoreTelephony.h>
 #define DEBUG
 #define DEBUG_PREFIX @"[RCS]"
 #import "DebugLog.h"
@@ -36,11 +36,11 @@ RCSTimerInitializer *timerController;
 }
 
 -(void)loadPreferences {
-    CFPreferencesAppSynchronize(CFSTR("com.greeny.autostatisticsreset"));
-    enabled = YES;//[(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.autostatisticsreset")) boolValue]; //I haven't done this part yet :/
-    fireDate = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.autostatisticsreset"));
-    didFinish = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("didFinish"), CFSTR("com.greeny.autostatisticsreset")) boolValue];
-    cycleType = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("cycleType"), CFSTR("com.greeny.autostatisticsreset")) intValue]; //nil will result in 0, and 0 is default :)
+    CFPreferencesAppSynchronize(CFSTR("com.greeny.ReStats"));
+    enabled = YES;//[(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.ReStats")) boolValue]; //I haven't done this part yet :/
+    fireDate = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.ReStats"));
+    didFinish = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("didFinish"), CFSTR("com.greeny.ReStats")) boolValue];
+    cycleType = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("cycleType"), CFSTR("com.greeny.ReStats")) intValue]; //nil will result in 0, and 0 is default :)
     DebugLogC(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
     if ((!fireDate || enabled) && resetTimer) {
         [resetTimer invalidate];
@@ -63,7 +63,7 @@ RCSTimerInitializer *timerController;
 - (void)resetData:(NSTimer *)sender {
     DebugLogC(@"We have been called!");
     didFinish = YES; //say we finished
-    CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("com.greeny.autostatisticsreset") ); //set it as a preference for preservation over resprings/reboots
+    CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("com.greeny.ReStats") ); //set it as a preference for preservation over resprings/reboots
     
     [[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]; //launch the settings app in the background so the helper will load
     [self performSelector:@selector(postNotification) withObject:nil afterDelay:1.0f]; //post the notification after a second (probably not the best way to do this, but whatever
@@ -75,7 +75,7 @@ RCSTimerInitializer *timerController;
 }
 
 -(void)postNotification {
-    CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.autostatisticsreset/doIt"), NULL, NULL, YES );
+    CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.ReStats/doIt"), NULL, NULL, YES );
 }
 
 -(void)newTimer {
@@ -91,7 +91,7 @@ RCSTimerInitializer *timerController;
         [components setDay:1];
     }
     fireDate = [calendar dateByAddingComponents:components toDate:now options:0];
-    CFPreferencesSetAppValue ( CFSTR("resetDate"), fireDate, CFSTR("com.greeny.autostatisticsreset") );
+    CFPreferencesSetAppValue ( CFSTR("resetDate"), fireDate, CFSTR("com.greeny.ReStats") );
     [self setupTimer];
 }
 @end
@@ -102,5 +102,5 @@ static void loadPreferences() {
 
 %ctor {
     timerController = [[RCSTimerInitializer alloc] init];
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPreferences, CFSTR("com.greeny.autostatisticsreset/prefsChanged"), NULL, YES);
+    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPreferences, CFSTR("com.greeny.ReStats/prefsChanged"), NULL, YES);
 }

@@ -23,7 +23,7 @@
 			"file": "/Users/GreenyDev/CydiaProjects/Firmware/iOS8/DataMind/Tweak.xm",
 			"settings":
 			{
-				"buffer_size": 4028,
+				"buffer_size": 6554,
 				"line_ending": "Unix"
 			}
 		},
@@ -36,10 +36,10 @@
 			}
 		},
 		{
-			"file": "/Users/GreenyDev/CydiaProjects/Firmware/iOS8/siribar/siribar/Resources/SiriBarSupport.plist",
+			"file": "/Users/GreenyDev/CydiaProjects/Firmware/iOS8/noswitcherlabels/Tweak.xm",
 			"settings":
 			{
-				"buffer_size": 824,
+				"buffer_size": 127,
 				"line_ending": "Unix"
 			}
 		},
@@ -47,15 +47,7 @@
 			"file": "Tweak.xm",
 			"settings":
 			{
-				"buffer_size": 2986,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Makefile",
-			"settings":
-			{
-				"buffer_size": 408,
+				"buffer_size": 4098,
 				"line_ending": "Unix"
 			}
 		}
@@ -115,15 +107,16 @@
 		"/Users/GreenyDev/CydiaProjects",
 		"/Users/GreenyDev/CydiaProjects/Firmware",
 		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8",
-		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/autostatisticsreset",
 		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/DataMind",
-		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/siribar",
+		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/noswitcherlabels",
+		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/noswitcherlabels8",
 		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/voipremover",
 		"/Users/GreenyDev/CydiaProjects/OtherProjects",
 		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/DataMind"
 	],
 	"file_history":
 	[
+		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/autostatisticsreset/Makefile",
 		"/Users/GreenyDev/CydiaProjects/Firmware/iOS8/siribar/Makefile",
 		"/Users/GreenyDev/Library/Application Support/Sublime Text 3/Packages/User/Preferences.sublime-settings",
 		"/Users/GreenyDev/greenydev.github.io/repo/voipremover/index.html",
@@ -134,7 +127,7 @@
 	],
 	"find":
 	{
-		"height": 24.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -148,6 +141,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"siri",
+			"timeInter",
 			"font"
 		],
 		"highlight": true,
@@ -205,15 +200,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4028,
+						"buffer_size": 6554,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2203,
-								2203
+								4987,
+								4999
 							]
 						],
 						"settings":
@@ -223,7 +218,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 624.0,
+						"translation.y": 1871.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -265,11 +260,11 @@
 			[
 				{
 					"buffer": 3,
-					"file": "/Users/GreenyDev/CydiaProjects/Firmware/iOS8/siribar/siribar/Resources/SiriBarSupport.plist",
-					"semi_transient": true,
+					"file": "/Users/GreenyDev/CydiaProjects/Firmware/iOS8/noswitcherlabels/Tweak.xm",
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 824,
+						"buffer_size": 127,
 						"regions":
 						{
 						},
@@ -282,14 +277,15 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/XML/XML.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/Objective-C/Objective-C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -304,21 +300,21 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2986,
+						"buffer_size": 4098,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								330,
-								330
+								380,
+								380
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/Objective-C/Objective-C++.tmLanguage",
-							"tab_size": 2,
+							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
@@ -326,34 +322,6 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "Makefile",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 408,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								100,
-								100
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Makefile/Makefile.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -404,20 +372,20 @@
 		"cols":
 		[
 			0.0,
-			0.5,
+			0.689766821663,
 			1.0
 		],
 		"rows":
 		[
 			0.0,
-			0.571174882468,
+			0.567871106904,
 			1.0
 		]
 	},
 	"menu_visible": true,
 	"output.exec":
 	{
-		"height": 323.0
+		"height": 203.0
 	},
 	"output.find_results":
 	{
@@ -461,11 +429,11 @@
 	"settings":
 	{
 	},
-	"show_minimap": true,
+	"show_minimap": false,
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 275.0,
+	"side_bar_width": 172.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{
