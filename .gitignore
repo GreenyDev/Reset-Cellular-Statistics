@@ -1,8 +1,15 @@
-.theos
-obj
-_
-theos
-Packages
-*.sublime-*
-.DS_Store
+# gitignore for Theos
 
+*.deb
+_/
+theos/
+theos
+.theos
+obj/
+./obj/
+obj
+.DS_Store
+centerstage.sublime-project
+centerstage.sublime-workspace
+Packages/
+.sh
