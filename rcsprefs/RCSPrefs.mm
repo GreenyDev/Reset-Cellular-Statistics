@@ -9,9 +9,10 @@
 #define DEBUG
 #define DEBUG_PREFIX @"[RCS]"
 #import "../DebugLog.h"
-#import <Cephei/HBSpinnerTableCell.h>
+//#import <Cephei/HBSpinnerTableCell.h>
 
 #define kTintColor [UIColor colorWithRed:86.0/256.0 green:86.0/256.0 blue:92.0/256.0 alpha:1.0]
+#define kTweetText @"I'm using #ReStats by @GreenyDev to automatically reset my Cellular Statisics!"
 
 static int width = [[UIScreen mainScreen] bounds].size.width;
 
@@ -19,9 +20,9 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 - (id)initWithSpecifier:(id)arg1;
 @end
 
-@interface RCSPrefsListController: PSListController {
-}
+@interface RCSPrefsListController: PSListController {}
 @end
+
 @interface RCSDatePickerCell : PSEditableTableCell {
     NSDateFormatter *formatter;
 }
@@ -53,6 +54,20 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     [formatter setDateStyle:NSDateFormatterMediumStyle];
     [formatter setTimeStyle:NSDateFormatterShortStyle];
     return [formatter stringFromDate:date];
+}
+- (void)loadView {
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(tweetSP:)];
+        self.navigationItem.rightBarButtonItem.tintColor = kTintColor;
+    [super loadView];
+    [UISwitch appearanceWhenContainedIn:self.class, nil].onTintColor = kTintColor;
+
+}
+
+- (void)tweetSP:(id)sender {
+    TWTweetComposeViewController *tweetController = [[TWTweetComposeViewController alloc] init];
+    [tweetController setInitialText:kTweetText];
+    [self.navigationController presentViewController:tweetController animated:YES completion:nil];
+    [tweetController release];
 }
 @end
 

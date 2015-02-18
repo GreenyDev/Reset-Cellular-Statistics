@@ -1,5 +1,5 @@
 ARCHS = armv7 arm64
-TARGET = iphone:clang
+#TARGET = iphone:clang
 THEOS_BUILD_DIR = Packages
 GO_EASY_ON_ME = 1
 

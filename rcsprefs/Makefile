@@ -6,7 +6,7 @@ include theos/makefiles/common.mk
 BUNDLE_NAME = RCSPrefs
 RCSPrefs_FILES = RCSPrefs.mm
 RCSPrefs_INSTALL_PATH = /Library/PreferenceBundles
-RCSPrefs_FRAMEWORKS = UIKit
+RCSPrefs_FRAMEWORKS = UIKit Twitter
 RCSPrefs_PRIVATE_FRAMEWORKS = Preferences
 RCSPrefs_LIBRARIES = flipswitch
 
