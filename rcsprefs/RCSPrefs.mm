@@ -59,8 +59,8 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     return [formatter stringFromDate:date];
 }
 - (void)loadView {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRedo target:self action:@selector(tweetSP:)];
-        self.navigationItem.rightBarButtonItem.tintColor = kTintColor;
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(tweetSP:)];
+        //self.navigationItem.rightBarButtonItem.tintColor = kTintColor;
     [super loadView];
     [UISwitch appearanceWhenContainedIn:self.class, nil].onTintColor = kTintColor;
 
@@ -72,20 +72,27 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     [self.navigationController presentViewController:tweetController animated:YES completion:nil];
     [tweetController release];
 }
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
-    if(buttonIndex == 0){
-    NSString *prefsPath = @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
-    NSFileManager *manager = [NSFileManager defaultManager];
-        [manager removeItemAtPath:prefsPath error:NULL];
-        exit(0);
-    }
+-(void) resetPrefs {
+    UIAlertView *prefsIsKill = [[UIAlertView alloc] 
+        initWithTitle:@"ReStats"
+        message:@"Settings app will now close. This is not a crash."
+        delegate:self
+        cancelButtonTitle:@"OK"
+        otherButtonTitles:nil];
+    [prefsIsKill show];
+    [prefsIsKill setTag:1];
+    [prefsIsKill release];
 }
-- (void)resetPrefs{
-    UIAlertView *alert = [[UIAlertView alloc] init];
-    [alert setTitle:@"ReStats"];
-    [alert setMessage:@"Settings will now close. This is not a crash."]; 
-    [alert setDelegate:alert];
-    [alert addButtonWithTitle:@"Dismiss"];
+
+-(void) alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    if ([alertView tag] == 1) {
+        if (buttonIndex == 0) {
+            NSString *prefsPath = @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
+            NSFileManager *manager = [NSFileManager new];
+            [manager removeItemAtPath:prefsPath error:NULL];
+            system("/usr/bin/killall -9 Preferences");
+        }
+    }
 }
 @end
 

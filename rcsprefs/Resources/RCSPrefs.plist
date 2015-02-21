@@ -66,6 +66,8 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
+			<key>footerText</key>
+			<string>If you save a date and want to change it before the statistics reset, reset preferences and then change dates.</string>
 		</dict>
 		<dict>
 			<key>action</key>
