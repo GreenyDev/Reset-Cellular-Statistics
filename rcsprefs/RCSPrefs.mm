@@ -42,6 +42,9 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 - (void)donate{
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=9ZXVHGA5AW5CG&lc=AU&item_name=GreenyDev&currency_code=AUD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"]];
 }
+- (void)sourcelink{
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://github.com/GreenyDev/ReStats"]];
+}
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     [super touchesBegan:touches withEvent:event];
@@ -69,13 +72,19 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     [self.navigationController presentViewController:tweetController animated:YES completion:nil];
     [tweetController release];
 }
-- (void)resetPrefs{
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if(buttonIndex == 0){
     NSString *prefsPath = @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
     NSFileManager *manager = [NSFileManager defaultManager];
+        [manager removeItemAtPath:prefsPath error:NULL];
+        exit(0);
+    }
+}
+- (void)resetPrefs{
     UIAlertView *alert = [[UIAlertView alloc] init];
     [alert setTitle:@"ReStats"];
     [alert setMessage:@"Settings will now close. This is not a crash."]; 
-    [alert setDelegate:self];
+    [alert setDelegate:alert];
     [alert addButtonWithTitle:@"Dismiss"];
 }
 @end

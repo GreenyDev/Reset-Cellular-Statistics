@@ -103,6 +103,20 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<key>action</key>
 			<string>donate</string>
 		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>icon</key>
+			<string>github.png</string>
+			<key>label</key>
+			<string>View Source on Github</string>
+			<key>action</key>
+			<string>sourcelink</string>
+		</dict>
 	</array>
 	<key>title</key>
 	<string>ReStats</string>
