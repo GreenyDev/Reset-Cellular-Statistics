@@ -56,7 +56,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     return [formatter stringFromDate:date];
 }
 - (void)loadView {
-        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemCompose target:self action:@selector(tweetSP:)];
+        self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemRedo target:self action:@selector(tweetSP:)];
         self.navigationItem.rightBarButtonItem.tintColor = kTintColor;
     [super loadView];
     [UISwitch appearanceWhenContainedIn:self.class, nil].onTintColor = kTintColor;
@@ -68,6 +68,15 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     [tweetController setInitialText:kTweetText];
     [self.navigationController presentViewController:tweetController animated:YES completion:nil];
     [tweetController release];
+}
+- (void)resetPrefs{
+    NSString *prefsPath = @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
+    NSFileManager *manager = [NSFileManager defaultManager];
+    UIAlertView *alert = [[UIAlertView alloc] init];
+    [alert setTitle:@"ReStats"];
+    [alert setMessage:@"Settings will now close. This is not a crash."]; 
+    [alert setDelegate:self];
+    [alert addButtonWithTitle:@"Dismiss"];
 }
 @end
 

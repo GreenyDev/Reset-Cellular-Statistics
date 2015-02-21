@@ -1,5 +1,6 @@
 #import <UIKit/UIKit.h>
 #import <SpringBoard/SBApplication.h>
+#import <libactivator/libactivator.h>
 //#import <CoreTelephony/CoreTelephony.h>
 #define DEBUG
 #define DEBUG_PREFIX @"[RCS]"

@@ -68,6 +68,18 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<string>PSGroupCell</string>
 		</dict>
 		<dict>
+			<key>action</key>
+			<string>resetPrefs</string>
+			<key>label</key>
+			<string>Reset Preferences</string>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
 			<key>cell</key>
 			<string>PSLinkCell</string>
 			<key>detail</key>

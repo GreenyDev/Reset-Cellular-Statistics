@@ -8,6 +8,7 @@ include theos/makefiles/common.mk
 TWEAK_NAME = ReStats ReStatsHelper
 ReStats_FILES = Tweak.xm
 ReStats_FRAMEWORKS = UIKit
+ReStats__LDFLAGS = -lactivator
 
 ReStatsHelper_FILES = ReStatsHelper.xm
 ReStatsHelper_FRAMEWORKS = CoreTelephony
