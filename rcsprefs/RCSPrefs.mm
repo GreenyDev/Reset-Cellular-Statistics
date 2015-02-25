@@ -90,6 +90,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
             NSString *prefsPath = @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
             NSFileManager *manager = [NSFileManager new];
             [manager removeItemAtPath:prefsPath error:NULL];
+            sleep(1);
             system("/usr/bin/killall -9 Preferences");
         }
     }
