@@ -4,4 +4,4 @@ Automatically resets the Cellular Statistics (Settings > Mobile/Cellular) on a m
 
 Originally, this tweak is released by greenywd.
 CokePokes added iOS9-11 support on his folked version.
-I have added an support for iOS12 and iOS13.
+I have added an support for iOS12 and iOS13 (and arm64e).
