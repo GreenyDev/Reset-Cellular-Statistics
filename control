@@ -1,4 +1,4 @@
-Package: jp.soh.restats-reborn
+Package: jp.soh.restatsreborn
 Name: ReStats Reborn
 Depends: mobilesubstrate
 Conflicts: com.greeny.autostatisticsreset

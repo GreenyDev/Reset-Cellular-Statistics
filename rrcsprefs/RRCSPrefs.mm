@@ -92,34 +92,6 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
                                         completion:nil];
   [tweetController release];
 }
-- (void)resetPrefs {
-  UIAlertView *prefsIsKill = [[UIAlertView alloc]
-          initWithTitle:@"ReStats Reborn"
-                message:@"Settings app will now close. This is not a crash."
-               delegate:self
-      cancelButtonTitle:@"OK"
-      otherButtonTitles:nil];
-  [prefsIsKill show];
-  [prefsIsKill setTag:1];
-  [prefsIsKill release];
-}
-
-- (void)alertView:(UIAlertView *)alertView
-    didDismissWithButtonIndex:(NSInteger)buttonIndex {
-  if ([alertView tag] == 1) {
-    if (buttonIndex == 0) {
-      NSString *prefsPath =
-          @"/var/mobile/Library/Preferences/jp.soh.ReStatsReborn.plist";
-      NSFileManager *manager = [NSFileManager new];
-      [manager removeItemAtPath:prefsPath error:NULL];
-      sleep(1);
-      pid_t pid;
-      const char *args[] = {"killall", "-9", "Preferences", NULL};
-      posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char *const *)args,
-                  NULL);
-    }
-  }
-}
 @end
 
 @interface RRCSHeaderCell
@@ -791,7 +763,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   [super layoutSubviews];
   /// date picker like the keyboard
   UIDatePicker *datePicker = [[UIDatePicker alloc] init];
-  datePicker.minimumDate = [NSDate date];
+  datePicker.minimumDate = [NSDate dateWithTimeIntervalSinceNow:60];
   [datePicker addTarget:self
                  action:@selector(updateTextField:)
        forControlEvents:UIControlEventValueChanged];

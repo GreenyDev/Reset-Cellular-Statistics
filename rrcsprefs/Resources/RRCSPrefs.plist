@@ -17,6 +17,34 @@
 			<string>PSGroupCell</string>
 		</dict>
 		<dict>
+            <key>PostNotification</key>
+            <string>jp.soh.ReStatsReborn/prefsChanged</string>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <true/>
+            <key>defaults</key>
+            <string>jp.soh.ReStatsReborn</string>
+            <key>key</key>
+            <string>enabled</string>
+            <key>label</key>
+            <string>Enable</string>
+        </dict>
+		<dict>
+            <key>PostNotification</key>
+            <string>jp.soh.ReStatsReborn/prefsChanged</string>
+            <key>cell</key>
+            <string>PSSwitchCell</string>
+            <key>default</key>
+            <true/>
+            <key>defaults</key>
+            <string>jp.soh.ReStatsReborn</string>
+            <key>key</key>
+            <string>notifyOnTrigger</string>
+            <key>label</key>
+            <string>Notify on Trigger</string>
+        </dict>
+		<dict>
 			<key>PostNotification</key>
 			<string>jp.soh.ReStatsReborn/prefsChanged</string>
 			<key>label</key>
@@ -68,20 +96,6 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<string>stopEditing</string>
 			<key>label</key>
 			<string>Save</string>
-			<key>cell</key>
-			<string>PSButtonCell</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSGroupCell</string>
-			<key>footerText</key>
-			<string>If you save a date and want to change it before the statistics reset, reset preferences and then change dates.</string>
-		</dict>
-		<dict>
-			<key>action</key>
-			<string>resetPrefs</string>
-			<key>label</key>
-			<string>Reset Preferences</string>
 			<key>cell</key>
 			<string>PSButtonCell</string>
 		</dict>
