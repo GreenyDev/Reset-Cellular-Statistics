@@ -3,7 +3,7 @@ static void resetData() {
 		//iOS7-9 (by GreenyDev)
 		[[[%c(SettingsNetworkController) alloc] init] clearStats:nil];
 	} else if ([[[%c(PSUISettingsNetworkController) alloc] init] respondsToSelector:@selector(clearStats:)]) {
-		//iOS9-11 (by CokePokes)
+		//iOS9-11
 		[[[%c(PSUISettingsNetworkController) alloc] init] clearStats:nil];
 	} else if ([[[%c(PSUICellularController) alloc] init] respondsToSelector:@selector(clearStats:)]) {
 		//iOS12 (by Soh Satoh)
