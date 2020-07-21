@@ -5,17 +5,17 @@ GO_EASY_ON_ME = 1
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = ReStats ReStatsHelper
-ReStats_FILES = Tweak.xm
-ReStats_FRAMEWORKS = UIKit
-ReStats__LDFLAGS = -lactivator
+TWEAK_NAME = ReStatsReborn ReStatsRebornHelper
+ReStatsReborn_FILES = Tweak.xm
+ReStatsReborn_FRAMEWORKS = UIKit
+ReStatsReborn__LDFLAGS = -lactivator
 
-ReStatsHelper_FILES = ReStatsHelper.xm
-ReStatsHelper_FRAMEWORKS = CoreTelephony
+ReStatsRebornHelper_FILES = ReStatsRebornHelper.xm
+ReStatsRebornHelper_FRAMEWORKS = CoreTelephony
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-SUBPROJECTS += rcsprefs
+SUBPROJECTS += rrcsprefs
 include $(THEOS_MAKE_PATH)/aggregate.mk
 
 after-install::

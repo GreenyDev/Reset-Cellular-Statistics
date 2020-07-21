@@ -15,5 +15,5 @@ static void resetData() {
 }
 
 %ctor {
-	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)resetData, CFSTR("com.greeny.ReStats/doIt"), NULL, YES);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)resetData, CFSTR("jp.soh.ReStatsReborn/doIt"), NULL, YES);
 }

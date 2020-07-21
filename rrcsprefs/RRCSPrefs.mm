@@ -8,7 +8,7 @@
 #import <UIKit/UIWindow.h>
 #import <spawn.h>
 #define DEBUG
-#define DEBUG_PREFIX @"[RCS]"
+#define DEBUG_PREFIX @"[RRCS]"
 #import "../DebugLog.h"
 //#import <Cephei/HBSpinnerTableCell.h>
 
@@ -18,7 +18,8 @@
                    blue:92.0 / 256.0                                           \
                   alpha:1.0]
 #define kTweetText                                                             \
-  @"I'm using #ReStats by @GreenyDev to automatically reset my Cellular "      \
+  @"I'm using #ReStatsReborn by @soh_satoh and @GreenyDev to automatically "   \
+  @"reset my Cellular "                                                        \
   @"Statisics!"
 
 static int width = [[UIScreen mainScreen] bounds].size.width;
@@ -27,19 +28,19 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 - (id)initWithSpecifier:(id)arg1;
 @end
 
-@interface RCSPrefsListController : PSListController {
+@interface RRCSPrefsListController : PSListController {
 }
 @end
 
-@interface RCSDatePickerCell : PSEditableTableCell {
+@interface RRCSDatePickerCell : PSEditableTableCell {
   NSDateFormatter *formatter;
 }
 @end
 
-@implementation RCSPrefsListController
+@implementation RRCSPrefsListController
 - (id)specifiers {
   if (_specifiers == nil) {
-    _specifiers = [[self loadSpecifiersFromPlistName:@"RCSPrefs"
+    _specifiers = [[self loadSpecifiersFromPlistName:@"RRCSPrefs"
                                               target:self] retain];
   }
   return _specifiers;
@@ -57,7 +58,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 - (void)sourcelink {
   [[UIApplication sharedApplication]
-      openURL:[NSURL URLWithString:@"https://github.com/GreenyDev/ReStats"]];
+      openURL:[NSURL URLWithString:@"https://github.com/sohsatoh/ReStats"]];
 }
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
   [super touchesBegan:touches withEvent:event];
@@ -65,7 +66,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 - (id)datePickerStringValue:(id)specifier {
   NSDate *date = (NSDate *)CFPreferencesCopyAppValue(
-      CFSTR("resetDate"), CFSTR("com.greeny.ReStats"));
+      CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn"));
   // formatter for the user to see the calendar setting
   NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
   [formatter setDateStyle:NSDateFormatterMediumStyle];
@@ -93,7 +94,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 - (void)resetPrefs {
   UIAlertView *prefsIsKill = [[UIAlertView alloc]
-          initWithTitle:@"ReStats"
+          initWithTitle:@"ReStats Reborn"
                 message:@"Settings app will now close. This is not a crash."
                delegate:self
       cancelButtonTitle:@"OK"
@@ -108,7 +109,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   if ([alertView tag] == 1) {
     if (buttonIndex == 0) {
       NSString *prefsPath =
-          @"/var/mobile/Library/Preferences/com.greeny.ReStats.plist";
+          @"/var/mobile/Library/Preferences/jp.soh.ReStatsReborn.plist";
       NSFileManager *manager = [NSFileManager new];
       [manager removeItemAtPath:prefsPath error:NULL];
       sleep(1);
@@ -121,14 +122,102 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 @end
 
-@interface RCSDevelopersListController : PSListController {
+@interface RRCSHeaderCell
+    : PSTableCell <UITextViewDelegate, PreferencesTableCustomView> {
+  UILabel *tweakTitle;
+  UILabel *tweakSubtitle;
 }
 @end
 
-@implementation RCSDevelopersListController
+@implementation RRCSHeaderCell
+// Need to be fixed
+- (instancetype)initWithStyle:(UITableViewCellStyle)style
+              reuseIdentifier:(NSString *)reuseIdentifier
+                    specifier:(PSSpecifier *)specifier {
+  self = [super initWithStyle:style
+              reuseIdentifier:reuseIdentifier
+                    specifier:specifier];
+  if (self) {
+    int width = self.contentView.bounds.size.width;
+
+    CGRect frame = CGRectMake(0, 17.5, width, 62.5);
+    CGRect subtitleFrame = CGRectMake(0, 60.5, width, 62.5);
+
+    tweakTitle = [[UILabel alloc] initWithFrame:frame];
+    [tweakTitle setNumberOfLines:1];
+    [tweakTitle setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight"
+                                        size:48]];
+    [tweakTitle setText:@"ReStats Reborn"];
+    [tweakTitle setBackgroundColor:[UIColor clearColor]];
+    [tweakTitle setTextColor:[UIColor blackColor]];
+    [tweakTitle setTextAlignment:NSTextAlignmentCenter];
+    tweakTitle.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    tweakTitle.contentMode = UIViewContentModeScaleToFill;
+
+    tweakSubtitle = [[UILabel alloc] initWithFrame:subtitleFrame];
+    [tweakSubtitle setNumberOfLines:1];
+
+    NSString *subtitle = @"Original by GreenyDev / Reborn by Soh Satoh";
+    CGFloat customLetterSpacing = 2.0f;
+
+    NSMutableAttributedString *attributedText =
+        [[NSMutableAttributedString alloc] initWithString:subtitle];
+    [attributedText addAttribute:NSKernAttributeName
+                           value:[NSNumber numberWithFloat:customLetterSpacing]
+                           range:NSMakeRange(0, attributedText.length)];
+
+    tweakSubtitle.attributedText = attributedText;
+
+    [tweakSubtitle setFont:[UIFont fontWithName:@"HelveticaNeue-UltraLight"
+                                           size:13]];
+    [tweakSubtitle setBackgroundColor:[UIColor clearColor]];
+    [tweakSubtitle setTextColor:[UIColor blackColor]];
+    [tweakSubtitle setTextAlignment:NSTextAlignmentCenter];
+    tweakSubtitle.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+    tweakSubtitle.contentMode = UIViewContentModeScaleToFill;
+
+    if (@available(iOS 12.0, *)) {
+      if (self.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        // Dark mode
+        [tweakTitle setTextColor:[UIColor whiteColor]];
+        [tweakSubtitle setTextColor:[UIColor whiteColor]];
+      }
+    }
+
+    [self addSubview:tweakTitle];
+    [self addSubview:tweakSubtitle];
+  }
+  return self;
+}
+
+- (instancetype)initWithSpecifier:(PSSpecifier *)specifier {
+  return [self initWithStyle:UITableViewCellStyleDefault
+             reuseIdentifier:@"RRCSHeaderCell"
+                   specifier:specifier];
+}
+
+- (void)setFrame:(CGRect)frame {
+  frame.origin.x = 0;
+  [super setFrame:frame];
+}
+
+- (CGFloat)preferredHeightForWidth:(CGFloat)arg1 {
+  return 125.0f;
+}
+
+- (CGFloat)preferredHeightForWidth:(CGFloat)width inTableView:(id)tableView {
+  return [self preferredHeightForWidth:width];
+}
+@end
+
+@interface RRCSDevelopersListController : PSListController {
+}
+@end
+
+@implementation RRCSDevelopersListController
 - (id)specifiers {
   if (_specifiers == nil) {
-    _specifiers = [[self loadSpecifiersFromPlistName:@"RCSDevelopers"
+    _specifiers = [[self loadSpecifiersFromPlistName:@"RRCSDevelopers"
                                               target:self] retain];
   }
   return _specifiers;
@@ -148,8 +237,8 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     reuseIdentifier:(NSString *)reuseIdentifier {
   if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
     UIImage *bkIm = [[UIImage alloc]
-        initWithContentsOfFile:
-            @"/Library/PreferenceBundles/RCSPrefs.bundle/GreenyDevTwitter.png"];
+        initWithContentsOfFile:@"/Library/PreferenceBundles/RRCSPrefs.bundle/"
+                               @"GreenyDevTwitter.png"];
     _background = [[UIImageView alloc] initWithImage:bkIm];
     _background.frame = CGRectMake(10, 15, 70, 70);
     _background.layer.cornerRadius = _background.frame.size.height / 2;
@@ -185,7 +274,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     jobSubtitle = [[UILabel alloc]
         initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 50,
                                  frame.size.width, frame.size.height)];
-    [jobSubtitle setText:@"Developer"];
+    [jobSubtitle setText:@"Original Developer"];
     [jobSubtitle setTextColor:kTintColor];
     [jobSubtitle setBackgroundColor:[UIColor clearColor]];
     [jobSubtitle setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
@@ -245,6 +334,117 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 @end
 
+// Satoh Dev
+@interface SatohDev : PSTableCell {
+  UIImageView *_background;
+  UILabel *devName;
+  UILabel *devRealName;
+  UILabel *jobSubtitle;
+}
+@end
+
+@implementation SatohDev
+- (id)initWithStyle:(UITableViewCellStyle)style
+    reuseIdentifier:(NSString *)reuseIdentifier {
+  if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
+    UIImage *bkIm = [[UIImage alloc]
+        initWithContentsOfFile:@"/Library/PreferenceBundles/RRCSPrefs.bundle/"
+                               @"SohSatohTwitter.jpg"];
+    _background = [[UIImageView alloc] initWithImage:bkIm];
+    _background.frame = CGRectMake(10, 15, 70, 70);
+    _background.layer.cornerRadius = _background.frame.size.height / 2;
+    _background.layer.masksToBounds = YES;
+    _background.layer.borderWidth = 0;
+    [self addSubview:_background];
+
+    CGRect frame = [self frame];
+
+    devName = [[UILabel alloc]
+        initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 10,
+                                 frame.size.width, frame.size.height)];
+    [devName setText:@"Soh Satoh"];
+    [devName setBackgroundColor:[UIColor clearColor]];
+    [devName setTextColor:kTintColor];
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+      [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:30]];
+    else
+      [devName setFont:[UIFont fontWithName:@"Helvetica Light" size:23]];
+
+    [self addSubview:devName];
+
+    devRealName = [[UILabel alloc]
+        initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 30,
+                                 frame.size.width, frame.size.height)];
+    [devRealName setText:@"@soh_satoh on Twitter"];
+    [devRealName setTextColor:kTintColor];
+    [devRealName setBackgroundColor:[UIColor clearColor]];
+    [devRealName setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+
+    [self addSubview:devRealName];
+
+    jobSubtitle = [[UILabel alloc]
+        initWithFrame:CGRectMake(frame.origin.x + 95, frame.origin.y + 50,
+                                 frame.size.width, frame.size.height)];
+    [jobSubtitle setText:@"Developer of Reborn Version"];
+    [jobSubtitle setTextColor:kTintColor];
+    [jobSubtitle setBackgroundColor:[UIColor clearColor]];
+    [jobSubtitle setFont:[UIFont fontWithName:@"Helvetica Light" size:15]];
+
+    [self addSubview:jobSubtitle];
+  }
+  return self;
+}
+
+- (CGFloat)preferredHeightForWidth:(CGFloat)arg1 {
+  return 70.f;
+}
+
+@end
+
+@interface SatohTwitter : PSListController {
+}
+@end
+
+@implementation SatohTwitter
+- (id)specifiers {
+  NSString *user = @"soh_satoh";
+  if ([[UIApplication sharedApplication]
+          canOpenURL:[NSURL URLWithString:@"tweetbot:"]])
+    [[UIApplication sharedApplication]
+        openURL:[NSURL URLWithString:[@"tweetbot:///user_profile/"
+                                         stringByAppendingString:user]]];
+
+  else if ([[UIApplication sharedApplication]
+               canOpenURL:[NSURL URLWithString:@"twitterrific:"]])
+    [[UIApplication sharedApplication]
+        openURL:[NSURL URLWithString:[@"twitterrific:///profile?screen_name="
+                                         stringByAppendingString:user]]];
+
+  else if ([[UIApplication sharedApplication]
+               canOpenURL:[NSURL URLWithString:@"tweetings:"]])
+    [[UIApplication sharedApplication]
+        openURL:[NSURL URLWithString:[@"tweetings:///user?screen_name="
+                                         stringByAppendingString:user]]];
+
+  else if ([[UIApplication sharedApplication]
+               canOpenURL:[NSURL URLWithString:@"twitter:"]])
+    [[UIApplication sharedApplication]
+        openURL:[NSURL URLWithString:[@"twitter://user?screen_name="
+                                         stringByAppendingString:user]]];
+
+  else
+    [[UIApplication sharedApplication]
+        openURL:[NSURL URLWithString:[@"https://mobile.twitter.com/"
+                                         stringByAppendingString:user]]];
+  return 0;
+}
+
+- (void)viewDidAppear:(BOOL)arg1 {
+  UINavigationController *navController = self.navigationController;
+  [navController popViewControllerAnimated:YES];
+}
+@end
+
 @interface SHIVADOC : PSTableCell {
   UIImageView *_background;
   UILabel *devName;
@@ -260,7 +460,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
     UIImage *bkIm = [[UIImage alloc]
         initWithContentsOfFile:
-            @"/Library/PreferenceBundles/RCSPrefs.bundle/SHIVADOC.png"];
+            @"/Library/PreferenceBundles/RRCSPrefs.bundle/SHIVADOC.png"];
     _background = [[UIImageView alloc] initWithImage:bkIm];
     _background.frame = CGRectMake(10, 15, 70, 70);
     _background.layer.cornerRadius = _background.frame.size.height / 2;
@@ -361,7 +561,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     reuseIdentifier:(NSString *)reuseIdentifier {
   if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
     UIImage *bkIm = [[UIImage alloc]
-        initWithContentsOfFile:@"/Library/PreferenceBundles/RCSPrefs.bundle/"
+        initWithContentsOfFile:@"/Library/PreferenceBundles/RRCSPrefs.bundle/"
                                @"BrandonMartinTwitter.png"];
     _background = [[UIImageView alloc] initWithImage:bkIm];
     _background.frame = CGRectMake(10, 15, 70, 70);
@@ -489,7 +689,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   if ((self = [super initWithStyle:style reuseIdentifier:reuseIdentifier])) {
     UIImage *bkIm = [[UIImage alloc]
         initWithContentsOfFile:
-            @"/Library/PreferenceBundles/RCSPrefs.bundle/MD.png"];
+            @"/Library/PreferenceBundles/RRCSPrefs.bundle/MD.png"];
     _background = [[UIImageView alloc] initWithImage:bkIm];
     _background.frame = CGRectMake(10, 15, 70, 70);
     _background.layer.cornerRadius = _background.frame.size.height / 2;
@@ -585,7 +785,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 @end
 
-@implementation RCSDatePickerCell
+@implementation RRCSDatePickerCell
 
 - (void)layoutSubviews {
   [super layoutSubviews];
@@ -619,10 +819,10 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
     // manually set the value and post the notification because the other way
     // wasn't working
     CFPreferencesSetAppValue(CFSTR("resetDate"), date,
-                             CFSTR("com.greeny.ReStats"));
+                             CFSTR("jp.soh.ReStatsReborn"));
     CFNotificationCenterPostNotification(
         CFNotificationCenterGetDarwinNotifyCenter(),
-        CFSTR("com.greeny.ReStats/prefsChanged"), NULL, NULL, YES);
+        CFSTR("jp.soh.ReStatsReborn/prefsChanged"), NULL, NULL, YES);
   }
 }
 

@@ -1,12 +1,11 @@
-Package: com.greeny.restats
-Name: ReStats
+Package: jp.soh.restats-reborn
+Name: ReStats Reborn
 Depends: mobilesubstrate
 Conflicts: com.greeny.autostatisticsreset
 Version: 1.2
 Architecture: iphoneos-arm
-Description: Automatically reset Cellular statistics on a certain day!
-Maintainer: GreenyDev
-Author: GreenyDev
-Depiction: http://greenydev.github.io/repo/restats/Index.html
+Description: Automatically reset Cellular statistics on a certain day! Support iOS7-13
+Maintainer: Soh Satoh
+Author: GreenyDev, CokePokes, Soh Satoh
 Icon: file:///Library/PreferenceBundles/RCSPrefs.bundle/RCSPrefs@3x.png
 Section: Tweaks

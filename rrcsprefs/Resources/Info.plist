@@ -5,9 +5,9 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>RCSPrefs</string>
+	<string>RRCSPrefs</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.greeny.rcsprefs</string>
+	<string>jp.soh.RRCSprefs</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -23,6 +23,6 @@
 	<key>MinimumOSVersion</key>
 	<string>3.0</string>
 	<key>NSPrincipalClass</key>
-	<string>RCSPrefsListController</string>
+	<string>RRCSPrefsListController</string>
 </dict>
 </plist>
