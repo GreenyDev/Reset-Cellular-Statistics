@@ -1,7 +1,9 @@
 GO_EASY_ON_ME = 1
-ARCHS = armv7 arm64
+ARCHS = armv7 arm64 arm64e
 
-include theos/makefiles/common.mk
+include $(THEOS)/makefiles/common.mk
+TARGET = iphone:clang:latest:7.0
+SYSROOT = /Users/soh/theos/sdks/iPhoneOS13.0.sdk
 
 BUNDLE_NAME = RCSPrefs
 RCSPrefs_FILES = RCSPrefs.mm

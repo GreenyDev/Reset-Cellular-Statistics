@@ -2,7 +2,7 @@ Package: com.greeny.restats
 Name: ReStats
 Depends: mobilesubstrate
 Conflicts: com.greeny.autostatisticsreset
-Version: 1.1
+Version: 1.2
 Architecture: iphoneos-arm
 Description: Automatically reset Cellular statistics on a certain day!
 Maintainer: GreenyDev
