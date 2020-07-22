@@ -115,7 +115,7 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>If you appreciate this tweak, please use this button to donate to the original developer.</string>
+			<string>If you appreciate this tweak, please use this button to donate to developers.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -123,9 +123,19 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 			<key>icon</key>
 			<string>paypal.png</string>
 			<key>label</key>
-			<string>Donate</string>
+			<string>Donate to GreenyDev</string>
 			<key>action</key>
 			<string>donate</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>icon</key>
+			<string>paypal.png</string>
+			<key>label</key>
+			<string>Donate to Soh</string>
+			<key>action</key>
+			<string>donateToSoh</string>
 		</dict>
 		<dict>
 			<key>cell</key>

@@ -56,9 +56,14 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
                          @"item_name=GreenyDev&currency_code=AUD&bn=PP%"
                          @"2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted"]];
 }
+- (void)donateToSoh {
+  [[UIApplication sharedApplication]
+      openURL:[NSURL URLWithString:@"https://paypal.me/sohsatoh"]];
+}
 - (void)sourcelink {
   [[UIApplication sharedApplication]
-      openURL:[NSURL URLWithString:@"https://github.com/sohsatoh/ReStats"]];
+      openURL:[NSURL
+                  URLWithString:@"https://github.com/sohsatoh/ReStats-Reborn"]];
 }
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
   [super touchesBegan:touches withEvent:event];
