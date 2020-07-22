@@ -1,8 +1,5 @@
 #import "Tweak.h"
 
-#define DEBUG
-#define DEBUG_PREFIX @"[RCS]"
-#import "DebugLog.h"
 #define MONTH_TYPE 0
 #define WEEK_TYPE 1
 #define DAY_TYPE 2
@@ -10,7 +7,7 @@
 extern dispatch_queue_t __BBServerQueue;
 static BBServer *bbServer = nil;
 
-@interface RRCSTimerInitializer : NSObject <UIAlertViewDelegate>
+@interface RRCSTimerInitializer: NSObject <UIAlertViewDelegate>
 {
 	BOOL enabled;
 	BOOL notifyOnTrigger;
@@ -45,7 +42,7 @@ RRCSTimerInitializer *timerController;
 	fireDate = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn"));
 	didFinish = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("didFinish"), CFSTR("jp.soh.ReStatsReborn"))boolValue];
 	cycleType = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("cycleType"), CFSTR("jp.soh.ReStatsReborn"))intValue]; //nil will result in 0, and 0 is default :)
-	DebugLogC(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
+	HBLogDebug(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
 	if (resetTimer) {
 		[resetTimer invalidate];
 		resetTimer = nil;
@@ -57,7 +54,7 @@ RRCSTimerInitializer *timerController;
 	if (!fireDate || !enabled) return;
 	NSTimeInterval fireTime = [fireDate timeIntervalSinceNow];
 	if (fireTime>0) {
-		DebugLogC(@"Setting timer for %f seconds", fireTime);
+		HBLogDebug(@"Setting timer for %f seconds", fireTime);
 		resetTimer = [NSTimer scheduledTimerWithTimeInterval:fireTime target:self selector:@selector(resetData:) userInfo:nil repeats:NO];
 	} else if (!didFinish) {
 		[self resetData:nil]; //if the phone was off or something when it was supposed to fire, do it now.
@@ -65,7 +62,7 @@ RRCSTimerInitializer *timerController;
 }
 
 - (void)resetData:(NSTimer *)sender {
-	DebugLogC(@"We have been called!");
+	HBLogDebug(@"We have been called!");
 	didFinish = YES; //say we finished
 	CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("jp.soh.ReStatsReborn") ); //set it as a preference for preservation over resprings/reboots
 

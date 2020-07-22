@@ -7,10 +7,6 @@
 #import <UIKit/UIKit.h>
 #import <UIKit/UIWindow.h>
 #import <spawn.h>
-#define DEBUG
-#define DEBUG_PREFIX @"[RRCS]"
-#import "../DebugLog.h"
-//#import <Cephei/HBSpinnerTableCell.h>
 
 #define kTintColor                                                             \
   [UIColor colorWithRed:86.0 / 256.0                                           \
