@@ -9,5 +9,6 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = ReStatsRebornHelper
 ReStatsRebornHelper_FILES = ReStatsRebornHelper.xm
 ReStatsRebornHelper_FRAMEWORKS = CoreTelephony
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk

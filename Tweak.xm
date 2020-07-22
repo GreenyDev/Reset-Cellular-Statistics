@@ -37,11 +37,11 @@ RRCSTimerInitializer *timerController;
 
 -(void)loadPreferences {
 	CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
-	enabled = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("enabled"), CFSTR("jp.soh.ReStatsReborn"))boolValue];
-	notifyOnTrigger = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("notifyOnTrigger"), CFSTR("jp.soh.ReStatsReborn"))boolValue];
-	fireDate = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn"));
-	didFinish = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("didFinish"), CFSTR("jp.soh.ReStatsReborn"))boolValue];
-	cycleType = [(NSNumber*)CFPreferencesCopyAppValue (CFSTR("cycleType"), CFSTR("jp.soh.ReStatsReborn"))intValue]; //nil will result in 0, and 0 is default :)
+	enabled = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("enabled"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	notifyOnTrigger = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("notifyOnTrigger"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	fireDate = (NSDate*)CFBridgingRelease(CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn")));
+	didFinish = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("didFinish"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	cycleType = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("cycleType"), CFSTR("jp.soh.ReStatsReborn")))intValue]; //nil will result in 0, and 0 is default :)
 	HBLogDebug(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
 	if (resetTimer) {
 		[resetTimer invalidate];
@@ -93,7 +93,7 @@ RRCSTimerInitializer *timerController;
 		[components setDay:1];
 	}
 	fireDate = [calendar dateByAddingComponents:components toDate:now options:0];
-	CFPreferencesSetAppValue ( CFSTR("resetDate"), fireDate, CFSTR("jp.soh.ReStatsReborn") );
+	CFPreferencesSetAppValue (CFSTR("resetDate"), (__bridge CFPropertyListRef)fireDate, CFSTR("jp.soh.ReStatsReborn") );
 	[self setupTimer];
 }
 

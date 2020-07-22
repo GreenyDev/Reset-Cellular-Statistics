@@ -10,6 +10,7 @@ RRCSPrefs_FILES = RRCSPrefs.mm
 RRCSPrefs_INSTALL_PATH = /Library/PreferenceBundles
 RRCSPrefs_FRAMEWORKS = UIKit Twitter
 RRCSPrefs_PRIVATE_FRAMEWORKS = Preferences
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/bundle.mk
 

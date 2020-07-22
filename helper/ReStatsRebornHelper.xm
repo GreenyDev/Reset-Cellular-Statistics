@@ -1,3 +1,5 @@
+#import "ReStatsRebornHelper.h"
+
 static void resetData() {
 	if ([[[%c(SettingsNetworkController) alloc] init] respondsToSelector: @selector(clearStats:)]) {
 		//iOS7-9 (by GreenyDev)

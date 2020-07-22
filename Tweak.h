@@ -2,8 +2,13 @@
 #import <SpringBoard/SBApplication.h>
 #import <libactivator/libactivator.h>
 
+@interface UIApplication (Private)
+- (void)launchApplicationWithIdentifier:(NSString *)identifier suspended:(BOOL)suspended;
+@end
+
 @interface BBAction : NSObject
 + (id)action;
++ (id)actionWithLaunchBundleID:(NSString *)bundleID;
 @end
 
 @interface BBBulletin : NSObject <NSCopying, NSCoding>
