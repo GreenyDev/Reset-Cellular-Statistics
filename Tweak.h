@@ -1,11 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <SpringBoard/SBApplication.h>
-#import <libactivator/libactivator.h>
 
-@interface UIApplication (Private)
-- (void)launchApplicationWithIdentifier:(NSString *)identifier suspended:(BOOL)suspended;
-@end
-
+//Notification
 @interface BBAction : NSObject
 + (id)action;
 + (id)actionWithLaunchBundleID:(NSString *)bundleID;
@@ -60,4 +56,8 @@
 - (void)publishBulletinRequest:(id)arg1 destinations:(unsigned long long)arg2;
 - (void)publishBulletin:(id)arg1 destinations:(unsigned long long)arg2 alwaysToLockScreen:(bool)arg3;
 - (void)publishBulletinRequest:(id)arg1 destinations:(unsigned long long)arg2 alwaysToLockScreen:(bool)arg3;
+@end
+
+@interface UIApplication (Private)
+- (void)launchApplicationWithIdentifier:(NSString *)identifier suspended:(BOOL)suspended;
 @end

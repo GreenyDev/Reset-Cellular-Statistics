@@ -10,7 +10,6 @@ TWEAK_NAME = ReStatsReborn
 ReStatsReborn_FILES = Tweak.xm
 ReStatsReborn_FRAMEWORKS = UIKit
 ReStatsReborn_PRIVATE_FRAMEWORKS = BulletinBoard
-ReStatsReborn_LDFLAGS = -lactivator
 $(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk

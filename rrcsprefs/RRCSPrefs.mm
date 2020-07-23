@@ -764,7 +764,7 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   [super layoutSubviews];
   /// date picker like the keyboard
   UIDatePicker *datePicker = [[UIDatePicker alloc] init];
-  datePicker.minimumDate = [NSDate dateWithTimeIntervalSinceNow:60];
+  datePicker.minimumDate = [NSDate date];
   [datePicker addTarget:self
                  action:@selector(updateTextField:)
        forControlEvents:UIControlEventValueChanged];

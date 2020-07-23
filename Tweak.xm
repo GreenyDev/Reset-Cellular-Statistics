@@ -4,10 +4,64 @@
 #define WEEK_TYPE 1
 #define DAY_TYPE 2
 
+////Notification
 extern dispatch_queue_t __BBServerQueue;
 static BBServer *bbServer = nil;
 
-@interface RRCSTimerInitializer: NSObject <UIAlertViewDelegate>
+static void showNotification() {
+	if(bbServer) {
+		dispatch_sync(__BBServerQueue, ^{
+			CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
+			int dataUsage = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))intValue];
+			BBBulletinRequest *notification = [[%c(BBBulletinRequest) alloc] init];
+			[notification setDefaultAction: [%c(BBAction) actionWithLaunchBundleID: @"com.apple.Preferences"]];
+			notification.title = @"ReStats Reborn";
+			notification.message = [NSString stringWithFormat:@"Successfully reset the cellular statistics\n%@ was used during the period", [NSByteCountFormatter stringFromByteCount:dataUsage countStyle:NSByteCountFormatterCountStyleFile]];
+			notification.sectionID = @"com.apple.Preferences";
+			notification.recordID = @"jp.soh.ReStatsReborn.notification";
+			notification.publisherBulletinID = @"jp.soh.ReStatsReborn.notification";
+			notification.clearable = YES;
+			notification.showsMessagePreview = YES;
+			notification.date = [NSDate date];
+			notification.publicationDate = [NSDate date];
+			notification.lastInterruptDate = [NSDate date];
+
+			if ([bbServer respondsToSelector:@selector(publishBulletinRequest:destinations:alwaysToLockScreen:)]) {
+				[bbServer publishBulletinRequest:notification destinations:15 alwaysToLockScreen:NO];
+			} else if([bbServer respondsToSelector:@selector(publishBulletin:destinations:alwaysToLockScreen:)]) {
+				[bbServer publishBulletin:notification destinations:15 alwaysToLockScreen:NO];
+			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:)]) {
+				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15];
+			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:alwaysToLockScreen:)]) {
+				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15 alwaysToLockScreen:NO];
+			}
+		});
+	}
+	else HBLogDebug(@"Could not find BBServer");
+}
+
+%hook BBServer
+-(id)initWithQueue: (id)arg1 {
+	bbServer = %orig;
+	return bbServer;
+}
+
+-(id)initWithQueue:(id)arg1 dataProviderManager:(id)arg2 syncService:(id)arg3 dismissalSyncCache:(id)arg4 observerListener:(id)arg5 utilitiesListener:(id)arg6 conduitListener:(id)arg7 systemStateListener:(id)arg8 settingsListener:(id)arg9 {
+	bbServer = %orig;
+	return bbServer;
+}
+
+- (void)dealloc {
+	if (bbServer == self) {
+		bbServer = nil;
+	}
+	%orig;
+}
+%end
+
+
+//Timer
+@interface RRCSTimerInitializer : NSObject <UIAlertViewDelegate>
 {
 	BOOL enabled;
 	BOOL notifyOnTrigger;
@@ -77,7 +131,6 @@ RRCSTimerInitializer *timerController;
 
 -(void)postNotification {
 	CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("jp.soh.ReStatsReborn/doIt"), NULL, NULL, YES );
-	[self sendNotification];
 }
 
 -(void)newTimer {
@@ -96,58 +149,7 @@ RRCSTimerInitializer *timerController;
 	CFPreferencesSetAppValue (CFSTR("resetDate"), (__bridge CFPropertyListRef)fireDate, CFSTR("jp.soh.ReStatsReborn") );
 	[self setupTimer];
 }
-
--(void)sendNotification {
-	if(bbServer) {
-		NSLog(@"BBServer found");
-		dispatch_sync(__BBServerQueue, ^{
-			BBBulletinRequest *notification = [[%c(BBBulletinRequest) alloc] init];
-			[notification setDefaultAction: [%c(BBAction) actionWithLaunchBundleID: @"com.apple.Preferences"]];
-			notification.title = @"ReStats Reborn";
-			notification.message = @"Successfully reset the cellular statistics";
-			notification.sectionID = @"com.apple.Preferences";
-			notification.recordID = @"jp.soh.ReStatsReborn.notification";
-			notification.publisherBulletinID = @"jp.soh.ReStatsReborn.notification";
-			notification.clearable = YES;
-			notification.showsMessagePreview = YES;
-			notification.date = [NSDate date];
-			notification.publicationDate = [NSDate date];
-			notification.lastInterruptDate = [NSDate date];
-
-			if ([bbServer respondsToSelector:@selector(publishBulletinRequest:destinations:alwaysToLockScreen:)]) {
-				[bbServer publishBulletinRequest:notification destinations:15 alwaysToLockScreen:NO];
-			} else if([bbServer respondsToSelector:@selector(publishBulletin:destinations:alwaysToLockScreen:)]) {
-				[bbServer publishBulletin:notification destinations:15 alwaysToLockScreen:NO];
-			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:)]) {
-				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15];
-			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:alwaysToLockScreen:)]) {
-				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15 alwaysToLockScreen:NO];
-			}
-		});
-	}
-}
 @end
-
-
-////Notification
-%hook BBServer
--(id)initWithQueue: (id)arg1 {
-	bbServer = %orig;
-	return bbServer;
-}
-
--(id)initWithQueue:(id)arg1 dataProviderManager:(id)arg2 syncService:(id)arg3 dismissalSyncCache:(id)arg4 observerListener:(id)arg5 utilitiesListener:(id)arg6 conduitListener:(id)arg7 systemStateListener:(id)arg8 settingsListener:(id)arg9 {
-	bbServer = %orig;
-	return bbServer;
-}
-
-- (void)dealloc {
-	if (bbServer == self) {
-		bbServer = nil;
-	}
-	%orig;
-}
-%end
 
 static void loadPreferences() {
 	[timerController loadPreferences];
@@ -156,4 +158,5 @@ static void loadPreferences() {
 %ctor {
 	timerController = [[RRCSTimerInitializer alloc] init];
 	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPreferences, CFSTR("jp.soh.ReStatsReborn/prefsChanged"), NULL, YES);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)showNotification, CFSTR("jp.soh.ReStatsReborn/success"), NULL, YES);
 }
