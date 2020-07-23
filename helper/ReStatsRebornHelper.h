@@ -1,10 +1,30 @@
+//Helper
+@interface RRCSHelperInitializer : NSObject
+- (id)init;
+- (void)getDataWithCompletion:(void (^)(BOOL success))completion;
+- (void)resetData;
+@end
+
+//Clear Stats
 @interface SettingsNetworkController
 - (void)clearStats:(id)arg1;
 @end
 
-//SettingsCellular
+//Usage
 @interface PSDataUsageStatisticsCache
 + (id)sharedInstance;
-- (NSUInteger)totalCellularUsageForPeriod:(NSUInteger)arg1;
+- (unsigned long long)totalCellularUsageForPeriod:(unsigned long long)arg1;
 - (void)fetchDeviceDataUsageWithCompletion:(/*^block*/ id)arg1;
+@end
+
+@interface PSCellularUsage
+- (double)totalBytesUsed;
+- (double)bytesUsedThisCycle;
+- (double)bytesUsedLastCycle;
+@end
+
+@interface PSUIAppCellularUsageStatisticsCache
++ (id)sharedInstance;
+- (void)fetchDataUsageStatistics;
+- (PSCellularUsage *)totalUsage;
 @end

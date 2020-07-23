@@ -1,6 +1,23 @@
 #import <UIKit/UIKit.h>
 #import <SpringBoard/SBApplication.h>
 
+//Timer
+@interface RRCSTimerInitializer : NSObject
+{
+    BOOL enabled;
+    BOOL notifyOnTrigger;
+    NSTimer *resetTimer;
+    NSDate *fireDate;
+    BOOL didFinish;
+    int cycleType;
+}
+- (id)init;
+- (void)loadPreferences;
+- (void)setupTimer;
+- (void)resetData:(id)sender;
+- (void)newTimer;
+@end
+
 //Notification
 @interface BBAction : NSObject
 + (id)action;

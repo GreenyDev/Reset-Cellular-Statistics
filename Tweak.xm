@@ -12,11 +12,13 @@ static void showNotification() {
 	if(bbServer) {
 		dispatch_sync(__BBServerQueue, ^{
 			CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
-			int dataUsage = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))intValue];
+			unsigned long long dataUsage = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))unsignedLongLongValue];
 			BBBulletinRequest *notification = [[%c(BBBulletinRequest) alloc] init];
 			[notification setDefaultAction: [%c(BBAction) actionWithLaunchBundleID: @"com.apple.Preferences"]];
+			NSString *message = @"Successfully reset the cellular statistics";
+			if(dataUsage != 0) message = [message stringByAppendingFormat:@"\n%@ was used during the period",[NSByteCountFormatter stringFromByteCount:dataUsage countStyle:NSByteCountFormatterCountStyleFile]];
 			notification.title = @"ReStats Reborn";
-			notification.message = [NSString stringWithFormat:@"Successfully reset the cellular statistics\n%@ was used during the period", [NSByteCountFormatter stringFromByteCount:dataUsage countStyle:NSByteCountFormatterCountStyleFile]];
+			notification.message = message;
 			notification.sectionID = @"com.apple.Preferences";
 			notification.recordID = @"jp.soh.ReStatsReborn.notification";
 			notification.publisherBulletinID = @"jp.soh.ReStatsReborn.notification";
@@ -61,22 +63,6 @@ static void showNotification() {
 
 
 //Timer
-@interface RRCSTimerInitializer : NSObject <UIAlertViewDelegate>
-{
-	BOOL enabled;
-	BOOL notifyOnTrigger;
-	NSTimer *resetTimer;
-	NSDate *fireDate;
-	BOOL didFinish;
-	int cycleType;
-}
-- (id)init;
-- (void)loadPreferences;
-- (void)setupTimer;
-- (void)resetData:(id)sender;
-- (void)newTimer;
-@end
-
 RRCSTimerInitializer *timerController;
 
 @implementation RRCSTimerInitializer
