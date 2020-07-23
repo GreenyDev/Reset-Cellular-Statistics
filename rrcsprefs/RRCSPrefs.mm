@@ -33,6 +33,10 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 @end
 
+@interface RRCSStatisticsCell : PSEditableTableCell {
+}
+@end
+
 @implementation RRCSPrefsListController
 - (id)specifiers {
   if (_specifiers == nil) {
@@ -74,6 +78,23 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
   [formatter setTimeStyle:NSDateFormatterShortStyle];
   return [formatter stringFromDate:date];
 }
+
+- (id)lastDataUsageStringValue:(id)specifier {
+  unsigned long long dataUsage =
+      [(NSNumber *)CFBridgingRelease(CFPreferencesCopyAppValue(
+          CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))
+          unsignedLongLongValue];
+  return [NSByteCountFormatter
+      stringFromByteCount:dataUsage
+               countStyle:NSByteCountFormatterCountStyleFile];
+}
+
+- (id)lastCallTimeStringValue:(id)specifier {
+  NSString *callTime = (NSString *)CFBridgingRelease(CFPreferencesCopyAppValue(
+      CFSTR("lastCallTime"), CFSTR("jp.soh.ReStatsReborn")));
+  return callTime;
+}
+
 - (void)loadView {
   self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
       initWithBarButtonSystemItem:UIBarButtonSystemItemCompose

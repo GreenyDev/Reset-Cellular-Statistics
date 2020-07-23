@@ -105,6 +105,30 @@ If you set this for the 24th of January and monthly, it will go off on the 24th 
 		</dict>
 		<dict>
 			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>label</key>
+			<string>Last Data Usage</string>
+			<key>get</key>
+			<string>lastDataUsageStringValue:</string>
+			<key>set</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSStaticTextCell</string>
+			<key>label</key>
+			<string>Last Call Time</string>
+			<key>get</key>
+			<string>lastCallTimeStringValue:</string>
+			<key>set</key>
+			<string></string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+		</dict>
+		<dict>
+			<key>cell</key>
 			<string>PSLinkCell</string>
 			<key>detail</key>
 			<string>RRCSDevelopersListController</string>
