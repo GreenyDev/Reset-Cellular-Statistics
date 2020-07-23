@@ -28,3 +28,12 @@
 - (void)fetchDataUsageStatistics;
 - (PSCellularUsage *)totalUsage;
 @end
+
+@interface PSUICellularController
+- (NSString *)callTimeDurationRestrictedToCurrentPeriod:(BOOL)arg1;
+@end
+
+@interface PSUICallTimeGroup
+- (id)initWithListController:(id)arg1;
+- (NSString *)callTimeDurationRestrictedToCurrentPeriod:(BOOL)arg1;
+@end

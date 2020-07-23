@@ -13,10 +13,12 @@ static void showNotification() {
 		dispatch_sync(__BBServerQueue, ^{
 			CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
 			unsigned long long dataUsage = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))unsignedLongLongValue];
+			NSString *callTime = (NSString*)CFBridgingRelease(CFPreferencesCopyAppValue(CFSTR("lastCallTime"), CFSTR("jp.soh.ReStatsReborn")));
 			BBBulletinRequest *notification = [[%c(BBBulletinRequest) alloc] init];
 			[notification setDefaultAction: [%c(BBAction) actionWithLaunchBundleID: @"com.apple.Preferences"]];
 			NSString *message = @"Successfully reset the cellular statistics";
 			if(dataUsage != 0) message = [message stringByAppendingFormat:@"\n%@ was used during the period",[NSByteCountFormatter stringFromByteCount:dataUsage countStyle:NSByteCountFormatterCountStyleFile]];
+			if(callTime) message = [message stringByAppendingFormat:@"\nCall time was %@ in the period", callTime];
 			notification.title = @"ReStats Reborn";
 			notification.message = message;
 			notification.sectionID = @"com.apple.Preferences";
