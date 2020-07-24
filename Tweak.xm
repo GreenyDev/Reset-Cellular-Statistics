@@ -67,6 +67,20 @@ static void showNotification() {
 //Timer
 RRCSTimerInitializer *timerController;
 
+static void loadPreferences() {
+	[timerController loadPreferences];
+}
+
+static void displayStatusChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+	HBLogDebug(@"LockStatusChanged");
+	if([[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]) //launch the settings app in the background so the helper will load
+	{
+		[timerController prepareNotificationAndSetNewTimer];
+		CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (void*)displayStatusChanged, CFSTR("com.apple.springboard.lockstate"), NULL);
+	}
+}
+
 @implementation RRCSTimerInitializer
 
 -(id)init {
@@ -108,7 +122,21 @@ RRCSTimerInitializer *timerController;
 	didFinish = YES; //say we finished
 	CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("jp.soh.ReStatsReborn") ); //set it as a preference for preservation over resprings/reboots
 
-	[[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]; //launch the settings app in the background so the helper will load
+	if(![[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]) //launch the settings app in the background so the helper will load
+	{
+		//observe the notification to check the phone is unlocked
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), //center
+		                                (void*)displayStatusChanged, // observer
+		                                displayStatusChanged, // callback
+		                                CFSTR("com.apple.springboard.lockstate"), // event name
+		                                NULL, // object
+		                                CFNotificationSuspensionBehaviorDeliverImmediately);
+		return;
+	}
+	[self prepareNotificationAndSetNewTimer];
+}
+
+-(void)prepareNotificationAndSetNewTimer {
 	[self performSelector:@selector(postNotification) withObject:nil afterDelay:1.0f]; //post the notification after a second (probably not the best way to do this, but whatever
 	if (resetTimer) {
 		[resetTimer invalidate];
@@ -139,8 +167,10 @@ RRCSTimerInitializer *timerController;
 }
 @end
 
-static void loadPreferences() {
-	[timerController loadPreferences];
+%dtor {
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (void*)displayStatusChanged, CFSTR("com.apple.springboard.lockstate"), NULL);
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("jp.soh.ReStatsReborn/prefsChanged"), NULL);
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("jp.soh.ReStatsReborn/success"), NULL);
 }
 
 %ctor {

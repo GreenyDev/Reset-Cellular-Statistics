@@ -16,6 +16,7 @@
 - (void)setupTimer;
 - (void)resetData:(id)sender;
 - (void)newTimer;
+- (void)prepareNotificationAndSetNewTimer;
 @end
 
 //Notification
@@ -76,5 +77,5 @@
 @end
 
 @interface UIApplication (Private)
-- (void)launchApplicationWithIdentifier:(NSString *)identifier suspended:(BOOL)suspended;
+- (BOOL)launchApplicationWithIdentifier:(NSString *)identifier suspended:(BOOL)suspended;
 @end

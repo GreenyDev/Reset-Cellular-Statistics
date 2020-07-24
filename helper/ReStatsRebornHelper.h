@@ -14,6 +14,7 @@
 @interface PSDataUsageStatisticsCache
 + (id)sharedInstance;
 - (unsigned long long)totalCellularUsageForPeriod:(unsigned long long)arg1;
+- (void)_clearCache;
 - (void)fetchDeviceDataUsageWithCompletion:(/*^block*/ id)arg1;
 @end
 
