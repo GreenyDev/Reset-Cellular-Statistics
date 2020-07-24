@@ -34,7 +34,7 @@ RRCSHelperInitializer *helperController;
 			         dispatch_semaphore_signal(semaphore);
 			 }
 			];
-		} else dispatch_semaphore_signal(semaphore);
+		} else dispatch_semaphore_signal(semaphore); //Return NULL if on other iOS version
 	});
 
 	dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);

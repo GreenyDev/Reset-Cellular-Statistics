@@ -3,6 +3,7 @@
 #define MONTH_TYPE 0
 #define WEEK_TYPE 1
 #define DAY_TYPE 2
+#define CUSTOM_TYPE 3
 
 ////Notification
 extern dispatch_queue_t __BBServerQueue;
@@ -98,7 +99,8 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
 	fireDate = (NSDate*)CFBridgingRelease(CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn")));
 	didFinish = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("didFinish"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
 	cycleType = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("cycleType"), CFSTR("jp.soh.ReStatsReborn")))intValue]; //nil will result in 0, and 0 is default :)
-	HBLogDebug(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
+	customCycle = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("customCycle"), CFSTR("jp.soh.ReStatsReborn")))intValue];
+	HBLogDebug(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d, customCycle: %d", enabled, fireDate, didFinish, cycleType, customCycle);
 	if (resetTimer) {
 		[resetTimer invalidate];
 		resetTimer = nil;
@@ -160,6 +162,8 @@ static void displayStatusChanged(CFNotificationCenterRef center, void *observer,
 		[components setWeekOfYear:1];
 	} else if (cycleType == DAY_TYPE) {
 		[components setDay:1];
+	} else if (cycleType == CUSTOM_TYPE) {
+		[components setDay:customCycle];
 	}
 	fireDate = [calendar dateByAddingComponents:components toDate:now options:0];
 	CFPreferencesSetAppValue (CFSTR("resetDate"), (__bridge CFPropertyListRef)fireDate, CFSTR("jp.soh.ReStatsReborn") );

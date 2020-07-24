@@ -204,6 +204,23 @@ static int width = [[UIScreen mainScreen] bounds].size.width;
 }
 @end
 
+@interface RRCSCycleListController : PSListController {
+}
+@end
+
+@implementation RRCSCycleListController
+- (id)specifiers {
+  if (_specifiers == nil) {
+    _specifiers = [[self loadSpecifiersFromPlistName:@"RRCSCycle"
+                                              target:self] retain];
+  }
+  return _specifiers;
+}
+- (void)stopEditing {
+  [self.view endEditing:YES];
+}
+@end
+
 @interface RRCSDevelopersListController : PSListController {
 }
 @end

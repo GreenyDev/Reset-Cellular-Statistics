@@ -10,6 +10,7 @@
     NSDate *fireDate;
     BOOL didFinish;
     int cycleType;
+    int customCycle;
 }
 - (id)init;
 - (void)loadPreferences;

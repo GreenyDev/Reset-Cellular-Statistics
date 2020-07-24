@@ -45,35 +45,12 @@
             <string>Notify on Trigger</string>
         </dict>
 		<dict>
-			<key>PostNotification</key>
-			<string>jp.soh.ReStatsReborn/prefsChanged</string>
-			<key>label</key>
-			<string>Cycle...</string>
-			<key>defaults</key>
-			<string>jp.soh.ReStatsReborn</string>
-			<key>default</key>
-			<string>0</string>
-			<key>key</key>
-			<string>cycleType</string>
-			<key>validTitles</key>
-			<array>
-				<string>Monthly</string>
-				<string>Weekly</string>
-				<string>Daily</string>
-			</array>
-			<key>validValues</key>
-			<array>
-				<string>0</string>
-				<string>1</string>
-				<string>2</string>
-			</array>
-			<key>detail</key>
-			<string>PSListItemsController</string>
 			<key>cell</key>
-			<string>PSLinkListCell</string>
-			<key>staticTextMessage</key>
-			<string>The statistics will be reset every month, day, or week after the initial date you set.
-If you set this for the 24th of January and monthly, it will go off on the 24th of February, then the 24th of March, etc. If that date does not exist in a month, I'm not really sure what happens :P. Let me know when there's a month like that (I guess the closest is Feb).</string>
+			<string>PSLinkCell</string>
+			<key>detail</key>
+			<string>RRCSCycleListController</string>
+			<key>label</key>
+			<string>Cycle</string>
 		</dict>
 		<dict>
 			<key>cellClass</key>
