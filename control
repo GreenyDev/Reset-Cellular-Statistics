@@ -2,7 +2,7 @@ Package: jp.soh.restatsreborn
 Name: ReStats Reborn
 Depends: mobilesubstrate
 Conflicts: com.greeny.autostatisticsreset
-Version: 1.3
+Version: 1.4
 Architecture: iphoneos-arm
 Description: Automatically reset Cellular statistics on a certain day! Support iOS7-13
 Maintainer: Soh Satoh
