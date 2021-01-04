@@ -1,0 +1,10 @@
+{
+    entry = {
+	bundle = RRCSPrefs;
+	cell = PSLinkCell;
+	detail = RRCSPrefsListController;
+	icon = RRCSPrefs.png;
+	isController = 1;
+	label = "ReStats Reborn";
+    };
+}

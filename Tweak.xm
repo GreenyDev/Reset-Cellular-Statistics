@@ -1,107 +1,184 @@
-#import <UIKit/UIKit.h>
-#import <SpringBoard/SBApplication.h>
-#import <libactivator/libactivator.h>
-//#import <CoreTelephony/CoreTelephony.h>
-#define DEBUG
-#define DEBUG_PREFIX @"[RCS]"
-#import "DebugLog.h"
+#import "Tweak.h"
+
 #define MONTH_TYPE 0
 #define WEEK_TYPE 1
 #define DAY_TYPE 2
+#define CUSTOM_TYPE 3
 
-@interface RCSTimerInitializer : NSObject <UIAlertViewDelegate>
-{
-    BOOL enabled;
-    NSTimer *resetTimer;
-    NSDate *fireDate;
-    BOOL didFinish;
-    int cycleType;
+////Notification
+extern dispatch_queue_t __BBServerQueue;
+static BBServer *bbServer = nil;
+
+static void showNotification() {
+	if(bbServer) {
+		dispatch_sync(__BBServerQueue, ^{
+			CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
+			unsigned long long dataUsage = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("lastDataUsage"), CFSTR("jp.soh.ReStatsReborn")))unsignedLongLongValue];
+			NSString *callTime = (NSString*)CFBridgingRelease(CFPreferencesCopyAppValue(CFSTR("lastCallTime"), CFSTR("jp.soh.ReStatsReborn")));
+			BBBulletinRequest *notification = [[%c(BBBulletinRequest) alloc] init];
+			[notification setDefaultAction: [%c(BBAction) actionWithLaunchBundleID: @"com.apple.Preferences"]];
+			NSString *message = @"Successfully reset the cellular statistics";
+			if(dataUsage != 0) message = [message stringByAppendingFormat:@"\n%@ was used during the period",[NSByteCountFormatter stringFromByteCount:dataUsage countStyle:NSByteCountFormatterCountStyleFile]];
+			if(callTime) message = [message stringByAppendingFormat:@"\nCall time was %@ in the period", callTime];
+			notification.title = @"ReStats Reborn";
+			notification.message = message;
+			notification.sectionID = @"com.apple.Preferences";
+			notification.recordID = @"jp.soh.ReStatsReborn.notification";
+			notification.publisherBulletinID = @"jp.soh.ReStatsReborn.notification";
+			notification.clearable = YES;
+			notification.showsMessagePreview = YES;
+			notification.date = [NSDate date];
+			notification.publicationDate = [NSDate date];
+			notification.lastInterruptDate = [NSDate date];
+
+			if ([bbServer respondsToSelector:@selector(publishBulletinRequest:destinations:alwaysToLockScreen:)]) {
+				[bbServer publishBulletinRequest:notification destinations:15 alwaysToLockScreen:NO];
+			} else if([bbServer respondsToSelector:@selector(publishBulletin:destinations:alwaysToLockScreen:)]) {
+				[bbServer publishBulletin:notification destinations:15 alwaysToLockScreen:NO];
+			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:)]) {
+				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15];
+			} else if([bbServer respondsToSelector:@selector(_publishBulletinRequest:forSectionID:forDestinations:alwaysToLockScreen:)]) {
+				[bbServer _publishBulletinRequest:notification forSectionID:notification.sectionID forDestinations:15 alwaysToLockScreen:NO];
+			}
+		});
+	}
+	else HBLogDebug(@"Could not find BBServer");
 }
-- (id)init;
-- (void)loadPreferences;
-- (void)setupTimer;
-- (void)resetData:(id)sender;
-- (void)newTimer;
-@end
 
-RCSTimerInitializer *timerController;
+%hook BBServer
+-(id)initWithQueue: (id)arg1 {
+	bbServer = %orig;
+	return bbServer;
+}
 
-@implementation RCSTimerInitializer
+-(id)initWithQueue:(id)arg1 dataProviderManager:(id)arg2 syncService:(id)arg3 dismissalSyncCache:(id)arg4 observerListener:(id)arg5 utilitiesListener:(id)arg6 conduitListener:(id)arg7 systemStateListener:(id)arg8 settingsListener:(id)arg9 {
+	bbServer = %orig;
+	return bbServer;
+}
+
+- (void)dealloc {
+	if (bbServer == self) {
+		bbServer = nil;
+	}
+	%orig;
+}
+%end
+
+
+//Timer
+RRCSTimerInitializer *timerController;
+
+static void loadPreferences() {
+	[timerController loadPreferences];
+}
+
+static void displayStatusChanged(CFNotificationCenterRef center, void *observer, CFStringRef name, const void *object, CFDictionaryRef userInfo)
+{
+	HBLogDebug(@"LockStatusChanged");
+	if([[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]) //launch the settings app in the background so the helper will load
+	{
+		[timerController prepareNotificationAndSetNewTimer];
+		CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (void*)displayStatusChanged, CFSTR("com.apple.springboard.lockstate"), NULL);
+	}
+}
+
+@implementation RRCSTimerInitializer
 
 -(id)init {
-    if (self=[super init]) {
-        [self loadPreferences];
-        didFinish = NO;
-    }
-    return self;
+	if (self=[super init]) {
+		[self loadPreferences];
+		didFinish = NO;
+	}
+	return self;
 }
 
 -(void)loadPreferences {
-    CFPreferencesAppSynchronize(CFSTR("com.greeny.ReStats"));
-    enabled = YES;//[(NSNumber*)CFPreferencesCopyAppValue(CFSTR("enabled"), CFSTR("com.greeny.ReStats")) boolValue]; //I haven't done this part yet :/
-    fireDate = (NSDate*)CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("com.greeny.ReStats"));
-    didFinish = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("didFinish"), CFSTR("com.greeny.ReStats")) boolValue];
-    cycleType = [(NSNumber*)CFPreferencesCopyAppValue(CFSTR("cycleType"), CFSTR("com.greeny.ReStats")) intValue]; //nil will result in 0, and 0 is default :)
-    DebugLogC(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d", enabled, fireDate, didFinish, cycleType);
-    if ((!fireDate || enabled) && resetTimer) {
-        [resetTimer invalidate];
-        resetTimer = nil;
-    }
-    [self setupTimer];
+	CFPreferencesAppSynchronize(CFSTR("jp.soh.ReStatsReborn"));
+	enabled = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("enabled"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	notifyOnTrigger = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("notifyOnTrigger"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	fireDate = (NSDate*)CFBridgingRelease(CFPreferencesCopyAppValue(CFSTR("resetDate"), CFSTR("jp.soh.ReStatsReborn")));
+	didFinish = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("didFinish"), CFSTR("jp.soh.ReStatsReborn")))boolValue];
+	cycleType = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("cycleType"), CFSTR("jp.soh.ReStatsReborn")))intValue]; //nil will result in 0, and 0 is default :)
+	customCycle = [(NSNumber*)CFBridgingRelease (CFPreferencesCopyAppValue (CFSTR("customCycle"), CFSTR("jp.soh.ReStatsReborn")))intValue];
+	HBLogDebug(@"enabled: %d, fireDate: %@, didFinish: %d, cycleType: %d, customCycle: %d", enabled, fireDate, didFinish, cycleType, customCycle);
+	if (resetTimer) {
+		[resetTimer invalidate];
+		resetTimer = nil;
+	}
+	[self setupTimer];
 }
 
 -(void)setupTimer {
-    if (!fireDate || !enabled) return;
-    NSTimeInterval fireTime = [fireDate timeIntervalSinceNow];
-    if (fireTime>0) {
-        DebugLogC(@"Setting timer for %f seconds", fireTime);
-        resetTimer = [NSTimer scheduledTimerWithTimeInterval:fireTime target:self selector:@selector(resetData:) userInfo:nil repeats:NO];
-    } else if (!didFinish) {
-        [self resetData:nil]; //if the phone was off or something when it was supposed to fire, do it now.
-    }
+	if (!fireDate || !enabled) return;
+	NSTimeInterval fireTime = [fireDate timeIntervalSinceNow];
+	if (fireTime>0) {
+		HBLogDebug(@"Setting timer for %f seconds", fireTime);
+		resetTimer = [NSTimer scheduledTimerWithTimeInterval:fireTime target:self selector:@selector(resetData:) userInfo:nil repeats:NO];
+	} else if (!didFinish) {
+		[self resetData:nil]; //if the phone was off or something when it was supposed to fire, do it now.
+	}
 }
 
 - (void)resetData:(NSTimer *)sender {
-    DebugLogC(@"We have been called!");
-    didFinish = YES; //say we finished
-    CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("com.greeny.ReStats") ); //set it as a preference for preservation over resprings/reboots
-    
-    [[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]; //launch the settings app in the background so the helper will load
-    [self performSelector:@selector(postNotification) withObject:nil afterDelay:1.0f]; //post the notification after a second (probably not the best way to do this, but whatever
-    if (resetTimer) {
-        [resetTimer invalidate];
-        resetTimer = nil;
-    }
-    [self newTimer];
+	HBLogDebug(@"We have been called!");
+	didFinish = YES; //say we finished
+	CFPreferencesSetAppValue( CFSTR("didFinish"), kCFBooleanTrue, CFSTR("jp.soh.ReStatsReborn") ); //set it as a preference for preservation over resprings/reboots
+
+	if(![[UIApplication sharedApplication] launchApplicationWithIdentifier:@"com.apple.Preferences" suspended:YES]) //launch the settings app in the background so the helper will load
+	{
+		//observe the notification to check the phone is unlocked
+		CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), //center
+		                                (void*)displayStatusChanged, // observer
+		                                displayStatusChanged, // callback
+		                                CFSTR("com.apple.springboard.lockstate"), // event name
+		                                NULL, // object
+		                                CFNotificationSuspensionBehaviorDeliverImmediately);
+		return;
+	}
+	[self prepareNotificationAndSetNewTimer];
+}
+
+-(void)prepareNotificationAndSetNewTimer {
+	[self performSelector:@selector(postNotification) withObject:nil afterDelay:1.0f]; //post the notification after a second (probably not the best way to do this, but whatever
+	if (resetTimer) {
+		[resetTimer invalidate];
+		resetTimer = nil;
+	}
+	[self newTimer];
 }
 
 -(void)postNotification {
-    CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("com.greeny.ReStats/doIt"), NULL, NULL, YES );
+	CFNotificationCenterPostNotification ( CFNotificationCenterGetDarwinNotifyCenter(), CFSTR("jp.soh.ReStatsReborn/doIt"), NULL, NULL, YES );
 }
 
 -(void)newTimer {
-    //Set up the next timer, for exactly one month, week, or day later
-    NSDate *now = [NSDate date];
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [[NSDateComponents alloc] init];
-    if (cycleType == MONTH_TYPE) {
-        [components setMonth:1];
-    } else if (cycleType == WEEK_TYPE) {
-        [components setWeekOfYear:1];
-    } else if (cycleType == DAY_TYPE) {
-        [components setDay:1];
-    }
-    fireDate = [calendar dateByAddingComponents:components toDate:now options:0];
-    CFPreferencesSetAppValue ( CFSTR("resetDate"), fireDate, CFSTR("com.greeny.ReStats") );
-    [self setupTimer];
+	//Set up the next timer, for exactly one month, week, or day later
+	NSDate *now = [NSDate date];
+	NSCalendar *calendar = [NSCalendar currentCalendar];
+	NSDateComponents *components = [[NSDateComponents alloc] init];
+	if (cycleType == MONTH_TYPE) {
+		[components setMonth:1];
+	} else if (cycleType == WEEK_TYPE) {
+		[components setWeekOfYear:1];
+	} else if (cycleType == DAY_TYPE) {
+		[components setDay:1];
+	} else if (cycleType == CUSTOM_TYPE) {
+		[components setDay:customCycle];
+	}
+	fireDate = [calendar dateByAddingComponents:components toDate:now options:0];
+	CFPreferencesSetAppValue (CFSTR("resetDate"), (__bridge CFPropertyListRef)fireDate, CFSTR("jp.soh.ReStatsReborn") );
+	[self setupTimer];
 }
 @end
 
-static void loadPreferences() {
-    [timerController loadPreferences];
+%dtor {
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), (void*)displayStatusChanged, CFSTR("com.apple.springboard.lockstate"), NULL);
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("jp.soh.ReStatsReborn/prefsChanged"), NULL);
+	CFNotificationCenterRemoveObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, CFSTR("jp.soh.ReStatsReborn/success"), NULL);
 }
 
 %ctor {
-    timerController = [[RCSTimerInitializer alloc] init];
-    CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPreferences, CFSTR("com.greeny.ReStats/prefsChanged"), NULL, YES);
+	timerController = [[RRCSTimerInitializer alloc] init];
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)loadPreferences, CFSTR("jp.soh.ReStatsReborn/prefsChanged"), NULL, YES);
+	CFNotificationCenterAddObserver(CFNotificationCenterGetDarwinNotifyCenter(), NULL, (CFNotificationCallback)showNotification, CFSTR("jp.soh.ReStatsReborn/success"), NULL, YES);
 }

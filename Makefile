@@ -1,21 +1,21 @@
-ARCHS = armv7 arm64
-#TARGET = iphone:clang
+ARCHS = armv7 arm64 arm64e
+TARGET = iphone:clang:latest:7.0
+SYSROOT = /Users/soh/theos/sdks/iPhoneOS13.0.sdk
 THEOS_BUILD_DIR = Packages
 GO_EASY_ON_ME = 1
 
-include theos/makefiles/common.mk
+include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = ReStats ReStatsHelper
-ReStats_FILES = Tweak.xm
-ReStats_FRAMEWORKS = UIKit
-ReStats__LDFLAGS = -lactivator
-
-ReStatsHelper_FILES = ReStatsHelper.xm
-ReStatsHelper_FRAMEWORKS = CoreTelephony
+TWEAK_NAME = ReStatsReborn
+ReStatsReborn_FILES = Tweak.xm
+ReStatsReborn_FRAMEWORKS = UIKit
+ReStatsReborn_PRIVATE_FRAMEWORKS = BulletinBoard
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-SUBPROJECTS += rcsprefs
+SUBPROJECTS += rrcsprefs
+SUBPROJECTS += helper
 include $(THEOS_MAKE_PATH)/aggregate.mk
 
 after-install::
